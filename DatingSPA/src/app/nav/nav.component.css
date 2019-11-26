@@ -1,0 +1,11 @@
+.dropdown-toggle, .dropdown-item{
+  cursor: pointer;
+}
+
+#mainPhoto{
+  border: 2px solid white;
+  border-radius: 4px;
+  object-fit: cover;
+  width: 40px;
+  height: 40px;
+}

@@ -1,0 +1,17 @@
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\appsettings.Development.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\appsettings.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\Models\UserSeedData.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\Properties\launchSettings.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.deps.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.runtimeconfig.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.runtimeconfig.dev.json
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.dll
+G:\angular\DatingApp\DatingAPI\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.pdb
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.csprojAssemblyReference.cache
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.RazorAssemblyInfo.cache
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.RazorAssemblyInfo.cs
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.AssemblyInfoInputs.cache
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.AssemblyInfo.cs
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.RazorTargetAssemblyInfo.cache
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.dll
+G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.pdb

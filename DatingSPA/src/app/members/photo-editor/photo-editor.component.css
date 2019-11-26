@@ -1,0 +1,16 @@
+
+.nv-file-over{
+  border: dotted 3px red;
+  border-radius: 4px;
+}
+
+img.img-thumbnail{
+  height: 100px;
+  min-width: 100px !important;
+  margin-bottom: 2px;
+  object-fit: cover;
+}
+
+input[type=file]{
+  color: transparent;
+}
