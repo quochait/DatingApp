@@ -19,11 +19,19 @@ export class PhotoEditorComponent implements OnInit {
   hasAnotherDropZoneOver = false;
   baseUrl = environment.apiUrl;
 
-  constructor(private authService: AuthService, private userService: UserService, private alertify: AlertifyService) { }
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private alertify: AlertifyService
+  ) {}
 
   ngOnInit() {
     this.uploader = new FileUploader({
-      url: this.baseUrl + 'user/' + this.authService.decodeToken.nameid + '/photos',
+      url:
+        this.baseUrl +
+        'user/' +
+        this.authService.decodeToken.nameid +
+        '/photos',
       authToken: 'Bearer ' + localStorage.token,
       isHTML5: true,
       allowedFileType: ['image'],
@@ -32,7 +40,7 @@ export class PhotoEditorComponent implements OnInit {
       maxFileSize: 10 * 1024 * 1024
     });
 
-    this.uploader.onAfterAddingFile = (file) => {
+    this.uploader.onAfterAddingFile = file => {
       file.withCredentials = false;
     };
 
@@ -48,6 +56,9 @@ export class PhotoEditorComponent implements OnInit {
         };
 
         this.photos.push(photo);
+        if (photo.isMain) {
+          this.authService.changeMainPhoto(photo.url);
+        }
       }
     };
   }
@@ -61,24 +72,30 @@ export class PhotoEditorComponent implements OnInit {
   }
 
   setMainPhoto(photo: Photo) {
-    this.userService.setMainPhoto(photo.id).subscribe(res => {
-      this.alertify.success('Update successful');
-      this.currentMain = this.photos.filter(p => p.isMain === true)[0];
-      this.currentMain.isMain = false;
-      photo.isMain = true;
-      this.authService.changeMainPhoto(photo.url);
-    }, error => {
-      this.alertify.error(error);
-    });
+    this.userService.setMainPhoto(photo.id).subscribe(
+      res => {
+        this.alertify.success('Update successful');
+        this.currentMain = this.photos.filter(p => p.isMain === true)[0];
+        this.currentMain.isMain = false;
+        photo.isMain = true;
+        this.authService.changeMainPhoto(photo.url);
+      },
+      error => {
+        this.alertify.error(error);
+      }
+    );
   }
 
   deletePhoto(id: number) {
-    this.userService.deletePhoto(id).subscribe((res) => {
-      const index = this.photos.findIndex(p => p.id === id);
-      this.photos.splice(index, 1);
-      this.alertify.success('Detele Photo successful');
-    }, err => {
-      this.alertify.error('Failed to delete photo.');
-    });
+    this.userService.deletePhoto(id).subscribe(
+      res => {
+        const index = this.photos.findIndex(p => p.id === id);
+        this.photos.splice(index, 1);
+        this.alertify.success('Detele Photo successful');
+      },
+      err => {
+        this.alertify.error('Failed to delete photo.');
+      }
+    );
   }
 }

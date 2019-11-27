@@ -1,17 +1,221 @@
-<form #registerForm="ngForm" (ngSubmit)="register()">
-  <h2 class="text-center text-primary">Sign up</h2>
-  <hr>
-  
-  <div class="form-group">
-    <input type="text" class="form-control" required placeholder="Username" name="username" [(ngModel)]="model.username">
-  </div>
+<form [formGroup]="registerForm" (ngSubmit)="register()" class="text-center">
+  <h2 class="text-primary">Sign up</h2>
+  <hr />
 
+  <!-- Begin input username -->
   <div class="form-group">
-    <input type="password" class="form-control" required placeholder="Password" name="password" [(ngModel)]="model.password">
+    <input
+      [ngClass]="{
+        'is-invalid':
+          registerForm.get('username').errors &&
+          registerForm.get('username').touched
+      }"
+      type="text"
+      class="form-control is-invalid"
+      placeholder="Username"
+      formControlName="username"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('username').hasError('required')"
+    >
+      Please choose a username
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('username').hasError('minlength')"
+    >
+      Username must be at least 4 characters
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('username').hasError('maxlength')"
+    >
+      Username cannot excedd 12 characters
+    </div>
   </div>
+  <!-- End input username -->
 
-  <div class="form-group text-center">
-    <button class="btn btn-success mr-2" type="submit">Register</button>
-    <button class="btn btn-default" type="reset" (click)="cancel()">Cancel</button>
+  <!-- Begin input gender -->
+  <div class="form-group">
+    <label class="control-label mr-3">I am a:</label>
+    <label class="radio-inline mr-3">
+      <input type="radio" value="male" formControlName="gender" />
+      Male
+    </label>
+    <label class="radio-inline">
+      <input type="radio" value="female" formControlName="gender" />
+      Female
+    </label>
   </div>
+  <!-- End input gender -->
+
+  <!-- Begin input knownAs -->
+  <div class="form-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Known As..."
+      formControlName="knownAs"
+      [ngClass]="{
+        'is-invalid':
+          registerForm.get('knownAs').touched &&
+          registerForm.get('knownAs').errors
+      }"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('knownAs').hasError('required')"
+    >
+      Known As is required
+    </div>
+  </div>
+  <!-- End input knownAs -->
+
+  <!-- Begin input city -->
+  <div class="form-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="City"
+      formControlName="city"
+      [ngClass]="{
+        'is-invalid':
+          registerForm.get('city').touched && registerForm.get('city').errors
+      }"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('city').hasError('required')"
+    >
+      City is required
+    </div>
+  </div>
+  <!-- End input city -->
+
+  <!-- Begin input country -->
+  <div class="form-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Country"
+      formControlName="country"
+      [ngClass]="{
+        'is-invalid':
+          registerForm.get('country').touched &&
+          registerForm.get('country').errors
+      }"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('country').hasError('required')"
+    >
+      Country is required
+    </div>
+  </div>
+  <!-- End input country -->
+
+  <!-- Begin input birthday -->
+  <div class="form-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="dd/MM/YYYY"
+      formControlName="dateOfBirth"
+      [ngClass]="{
+        'is-invalid':
+          registerForm.get('dateOfBirth').touched &&
+          registerForm.get('dateOfBirth').errors
+      }"
+      bsDatepicker
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('dateOfBirth').hasError('required')"
+    >
+      Birthday is required
+    </div>
+  </div>
+  <!-- End input birthday -->
+
+  <!-- Begin input password -->
+  <div class="form-group">
+    <input
+      [ngClass]="{
+        'is-invalid':
+          registerForm.get('password').errors &&
+          registerForm.get('password').touched
+      }"
+      type="password"
+      class="form-control"
+      placeholder="Password"
+      formControlName="password"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('password').hasError('required')"
+    >
+      Password is required
+    </div>
+
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('password').hasError('minlength')"
+    >
+      Password must be at least 4 characters
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('password').hasError('maxlength')"
+    >
+      Password cannot excedd 12 characters
+    </div>
+  </div>
+  <!-- End input password -->
+
+  <!-- Begin input confirmPassword -->
+  <div class="form-group">
+    <input
+      [ngClass]="{
+        'is-invalid':
+          (registerForm.get('confirmPassword').errors &&
+            registerForm.get('confirmPassword').touched) ||
+          (registerForm.hasError('mismatch') &&
+            registerForm.get('confirmPassword').touched)
+      }"
+      type="password"
+      class="form-control"
+      placeholder="Confirm Password"
+      formControlName="confirmPassword"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="registerForm.get('confirmPassword').hasError('required')"
+    >
+      Confirm Password is required
+    </div>
+    <div class="invalid-feedback" *ngIf="registerForm.hasError('mismatch')">
+      Not match
+    </div>
+  </div>
+  <!-- End input confirmPassword -->
+
+  <!-- button control form submit or hide form -->
+  <div class="form-group">
+    <button
+      class="btn btn-success mr-2"
+      type="submit"
+      [disabled]="registerForm.invalid"
+    >
+      Register
+    </button>
+    <button
+      class="btn btn-default btn-outline-dark"
+      type="reset"
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
+  </div>
+  <!--  -->
 </form>

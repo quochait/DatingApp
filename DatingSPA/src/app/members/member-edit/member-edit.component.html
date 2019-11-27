@@ -1,39 +1,50 @@
 <div class="container mt-4">
   <div class="row mb-3">
     <div class="col-sm-4 text-center">
-      <h1> {{user.knownAs}}'s Profile </h1>
+      <h1>{{ user.knownAs }}'s Profile</h1>
     </div>
     <div class="col-sm-8">
       <div class="alert alert-info" *ngIf="editForm.dirty">
-        <strong>Infomation:</strong> You have made changes. Any unsaved changes will be lost!
+        <strong>Infomation:</strong> You have made changes. Any unsaved changes
+        will be lost!
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-sm-4">
       <div class="card">
-        <img src="{{user.photoUrl}}" alt="{{user.knownAs}}" class="card-img-top img-thumbnail">
+        <img
+          src="{{ user.photoUrl || '../../../assets/default.png'  }}"
+          alt="{{ user.knownAs }}"
+          class="card-img-top img-thumbnail"
+        />
         <div class="card-body">
           <div>
             <strong>Location:</strong>
-            <p>{{user.city}}, {{user.country}}</p>
+            <p>{{ user.city }}, {{ user.country }}</p>
           </div>
           <div>
             <strong>Age:</strong>
-            <p>{{user.age}}</p>
+            <p>{{ user.age }}</p>
           </div>
           <div>
             <strong>Last Active:</strong>
-            <p>{{user.lastActive}}</p>
+            <p>{{ user.lastActive }}</p>
           </div>
           <div>
             <strong>Member since:</strong>
-            <p>{{user.created}}</p>
+            <p>{{ user.created }}</p>
           </div>
         </div>
         <div class="card-footer text-center">
           <div class="btn-group d-flex">
-            <button [disabled]="!editForm.dirty" form="editForm" class="btn btn-success w-100">Save changes</button>
+            <button
+              [disabled]="!editForm.dirty"
+              form="editForm"
+              class="btn btn-success w-100"
+            >
+              Save changes
+            </button>
           </div>
         </div>
       </div>
@@ -44,25 +55,54 @@
           <tab heading="Edit profile">
             <form #editForm="ngForm" (submit)="updateUser()" id="editForm">
               <h4 class="mt-4">Description</h4>
-              <textarea rows="6" name="introduction" class="form-control" [(ngModel)]="user.introduction"></textarea>
+              <textarea
+                rows="6"
+                name="introduction"
+                class="form-control"
+                [(ngModel)]="user.introduction"
+              ></textarea>
               <h4 class="mt-4">Looking For</h4>
-              <textarea rows="7" name="lookingFor" class="form-control" [(ngModel)]="user.lookingFor"></textarea>
+              <textarea
+                rows="7"
+                name="lookingFor"
+                class="form-control"
+                [(ngModel)]="user.lookingFor"
+              ></textarea>
               <h4 class="mt-4">Interests</h4>
-              <textarea rows="3" name="interests" class="form-control" [(ngModel)]="user.interests"></textarea>
+              <textarea
+                rows="3"
+                name="interests"
+                class="form-control"
+                [(ngModel)]="user.interests"
+              ></textarea>
               <!-- <h4 class="mt-4">Location details: </h4> -->
               <div class="row mt-4 ml-1">
                 <div class="col-sm-6 inline p-0">
-                  <h4>City</h4> <input type="text" [(ngModel)]="user.city" name="city" class="form-control mr-2">
+                  <h4>City</h4>
+                  <input
+                    type="text"
+                    [(ngModel)]="user.city"
+                    name="city"
+                    class="form-control mr-2"
+                  />
                 </div>
                 <div class="col-sm-6">
-                  <h4>Country</h4> <input type="text" [(ngModel)]="user.country" name="country"
-                    class="form-control">
+                  <h4>Country</h4>
+                  <input
+                    type="text"
+                    [(ngModel)]="user.country"
+                    name="country"
+                    class="form-control"
+                  />
                 </div>
               </div>
             </form>
           </tab>
           <tab heading="Photos">
-            <app-photo-editor [photos]="user.photos" class="justify-content-center"></app-photo-editor>
+            <app-photo-editor
+              [photos]="user.photos"
+              class="justify-content-center"
+            ></app-photo-editor>
             <!-- <p>Photo will go here</p> -->
           </tab>
         </tabset>
