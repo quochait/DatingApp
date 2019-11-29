@@ -9,13 +9,11 @@ import { User } from '../_models/user';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css']
 })
-
 export class NavComponent implements OnInit {
-
   model: any = {};
   user: User;
 
-  constructor(public authService: AuthService, private alertify: AlertifyService, private router: Router) { }
+  constructor(public authService: AuthService, private alertify: AlertifyService, private router: Router) {}
 
   ngOnInit() {
     const user: User = JSON.parse(localStorage.getItem('user'));
@@ -29,14 +27,18 @@ export class NavComponent implements OnInit {
   }
 
   login() {
-    this.authService.login(this.model).subscribe(next => {
-      this.alertify.success('Logged in successfully.');
-      this.user = JSON.parse(localStorage.getItem('user'));
-    }, error => {
-      this.alertify.error(error);
-    }, () => {
-      this.router.navigate(['/members']);
-    });
+    this.authService.login(this.model).subscribe(
+      next => {
+        this.alertify.success('Logged in successfully.');
+        this.user = JSON.parse(localStorage.getItem('user'));
+      },
+      error => {
+        this.alertify.error(error);
+      },
+      () => {
+        this.router.navigate(['/members']);
+      }
+    );
   }
 
   loggedIn() {

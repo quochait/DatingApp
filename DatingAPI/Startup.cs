@@ -51,6 +51,7 @@ namespace DatingAPI
                         ValidateAudience = false
                     };
                 });
+            services.AddScoped<LogUserActivity>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +83,8 @@ namespace DatingAPI
 
             //seeder.SeedUsers();
             app.UseHttpsRedirection();
-            app.UseCors(x => x.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+            app.UseCors(x => x.WithOrigins("http://localhost:4200", "http://192.168.1.148:4200", "http://192.168.80.109:4200")
+            .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
             app.UseAuthentication();
             app.UseMvc();
         }

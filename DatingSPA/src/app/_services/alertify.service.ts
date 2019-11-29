@@ -4,11 +4,8 @@ declare let alertify: any;
 @Injectable({
   providedIn: 'root'
 })
-
-
 export class AlertifyService {
-
-  constructor() { }
+  constructor() {}
 
   confirm(message: string, okCallback: () => any) {
     alertify.confirm(message, (e: any) => {

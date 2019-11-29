@@ -19,19 +19,11 @@ export class PhotoEditorComponent implements OnInit {
   hasAnotherDropZoneOver = false;
   baseUrl = environment.apiUrl;
 
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private alertify: AlertifyService
-  ) {}
+  constructor(private authService: AuthService, private userService: UserService, private alertify: AlertifyService) {}
 
   ngOnInit() {
     this.uploader = new FileUploader({
-      url:
-        this.baseUrl +
-        'user/' +
-        this.authService.decodeToken.nameid +
-        '/photos',
+      url: this.baseUrl + 'user/' + this.authService.decodeToken.nameid + '/photos',
       authToken: 'Bearer ' + localStorage.token,
       isHTML5: true,
       allowedFileType: ['image'],

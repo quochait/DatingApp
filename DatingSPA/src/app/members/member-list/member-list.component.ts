@@ -4,6 +4,7 @@ import { UserService } from '../../_services/user.service';
 import { AlertifyService } from '../../_services/alertify.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { Pagination } from 'src/app/_models/pagination';
 
 @Component({
   selector: 'app-member-list',
@@ -12,12 +13,28 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MemberListComponent implements OnInit {
   users: User[];
+  pagination: Pagination = {};
 
-  constructor(private userService: UserService, private alertify: AlertifyService, private route: ActivatedRoute) { }
+  constructor(private alertify: AlertifyService, private userService: UserService, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.data.subscribe(res => {
-      this.users = res.users;
-    });
+    this.loadUsers();
+  }
+
+  pageChanged(event: any) {
+    this.pagination.currentPage = event.page;
+    this.loadUsers(this.pagination.currentPage, this.pagination.itemsPerPage);
+  }
+
+  loadUsers(page: number = 1, itemsPerPage: number = 5) {
+    this.userService.getUsers(page, itemsPerPage).subscribe(
+      response => {
+        this.users = response.result;
+        this.pagination = response.pagination;
+      },
+      error => {
+        this.alertify.error(error);
+      }
+    );
   }
 }

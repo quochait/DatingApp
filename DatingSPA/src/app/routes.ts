@@ -20,12 +20,14 @@ export const appRoutes: Routes = [
     children: [
       { path: 'members', component: MemberListComponent, resolve: { users: MemberListResolver } },
       {
-        path: 'member/edit', component: MemberEditComponent, resolve: { user: MemberEditResolver },
+        path: 'member/edit',
+        component: MemberEditComponent,
+        resolve: { user: MemberEditResolver },
         canDeactivate: [PreventUnsavedChangesGuard]
       },
       { path: 'member/:id', component: MemberDetailComponent, resolve: { user: MemberDetailResolver } },
       { path: 'messages', component: MessagesComponent },
-      { path: 'lists', component: ListsComponent },
+      { path: 'lists', component: ListsComponent }
     ]
   },
   { path: '**', redirectTo: '', pathMatch: 'full' }
