@@ -10,6 +10,9 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { PhotoUploadResolver } from './_resolvers/photo-upload.resolver';
+import { VerifyEmailComponent } from './members/verify-email/verify-email.component';
+import { VerifyEmailResolver } from './_resolvers/verify-email.resolver';
 
 export const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,9 +23,14 @@ export const appRoutes: Routes = [
     children: [
       { path: 'members', component: MemberListComponent, resolve: { users: MemberListResolver } },
       {
+        path: 'member/edit/verifyEmail',
+        component: VerifyEmailComponent,
+        resolve: { user: VerifyEmailResolver}
+      },
+      {
         path: 'member/edit',
         component: MemberEditComponent,
-        resolve: { user: MemberEditResolver },
+        resolve: { user: MemberEditResolver, photos: PhotoUploadResolver },
         canDeactivate: [PreventUnsavedChangesGuard]
       },
       { path: 'member/:id', component: MemberDetailComponent, resolve: { user: MemberDetailResolver } },

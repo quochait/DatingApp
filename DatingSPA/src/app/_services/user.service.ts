@@ -25,7 +25,7 @@ export class UserService {
     }
 
     return this.http
-      .get<User[]>(this.baseUrl, { observe: 'response', params })
+      .get<User[]>(this.baseUrl + '/' + 'getUsers', { observe: 'response', params })
       .pipe(
         map(response => {
           paginatedResult.result = response.body;
@@ -47,7 +47,7 @@ export class UserService {
       );
   }
 
-  getUser(id: number): Observable<User> {
+  getUser(id: string): Observable<User> {
     return this.http.get<User>(this.baseUrl + '/' + id);
   }
 
@@ -55,8 +55,11 @@ export class UserService {
     return this.http.put(this.baseUrl + '/' + this.authService.decodeToken.nameid, user);
   }
 
-  setMainPhoto(id: number) {
-    return this.http.post(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/photos/' + id + '/setMain', {});
+  setMainPhoto(photoUrl: string) {
+    // console.log(photoUrl);
+    let form = new FormData();
+    form.append('photoUrl', photoUrl);
+    return this.http.post(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/setMain', form);
   }
 
   deletePhoto(id: number) {

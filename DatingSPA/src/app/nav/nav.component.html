@@ -30,7 +30,7 @@
       <div class="dropdown" *ngIf="loggedIn()" dropdown>
         <img
           id="mainPhoto"
-          src="{{ user.photoUrl || '../../../assets/default.png' }}"
+          src="{{ user.mainPhotoUrl || '../../../assets/default.png' }}"
           alt=""
         />
         <button
@@ -69,12 +69,12 @@
         *ngIf="!loggedIn()"
       >
         <input
-          name="username"
+          name="email"
           class="form-control mr-sm-2"
-          #username="ngModel"
+          #email="ngModel"
           type="text"
-          placeholder="Username"
-          [(ngModel)]="model.username"
+          placeholder="Email"
+          [(ngModel)]="model.email"
           required
         />
         <input

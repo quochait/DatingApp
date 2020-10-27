@@ -1,12 +1,12 @@
 import { Photo } from './Photo';
 
 export interface User {
-  id: number;
+  id: string;
   username: string;
   knownAs: string;
   age: number;
   gender: string;
-  created: Date;
+  createdAt: Date;
   lastActive: Date;
   photoUrl: string;
   city: string;
@@ -14,5 +14,7 @@ export interface User {
   interests?: string;
   introduction?: string;
   lookingFor?: string;
-  photos?: Photo[];
+  isVerifyEmail?: boolean;
+  email?: string;
+  mainPhotoUrl?: string;
 }

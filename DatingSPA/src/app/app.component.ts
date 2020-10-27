@@ -12,7 +12,9 @@ export class AppComponent implements OnInit {
 
   title = 'DatingSPA';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService
+    ) {}
 
   ngOnInit() {
     const token = localStorage.getItem('token');
@@ -23,7 +25,8 @@ export class AppComponent implements OnInit {
     }
 
     if (user) {
-      this.authService.changeMainPhoto(user.photoUrl);
+      console.log(user.mainPhotoUrl);
+      this.authService.changeMainPhoto(user.mainPhotoUrl);
     }
   }
 }

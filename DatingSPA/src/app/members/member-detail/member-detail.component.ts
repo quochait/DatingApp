@@ -4,6 +4,8 @@ import { UserService } from 'src/app/_services/user.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
+import { PhotoService } from 'src/app/_services/photo.service';
+import { Photo } from 'src/app/_models/Photo';
 
 @Component({
   selector: 'app-member-detail',
@@ -14,8 +16,12 @@ export class MemberDetailComponent implements OnInit {
   user: User;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
-
-  constructor(private userService: UserService, private alertify: AlertifyService, private route: ActivatedRoute) {}
+  
+  constructor(
+    private userService: UserService, 
+    private alertify: AlertifyService, 
+    private route: ActivatedRoute, 
+    private photoService: PhotoService) {}
 
   ngOnInit() {
     this.route.data.subscribe(res => {
@@ -39,13 +45,18 @@ export class MemberDetailComponent implements OnInit {
   getImages() {
     const imageUrls = [];
     // tslint:disable-next-line: prefer-for-of
-    for (let index = 0; index < this.user.photos.length; index++) {
-      imageUrls.push({
-        small: this.user.photos[index].url,
-        medium: this.user.photos[index].url,
-        big: this.user.photos[index].url
-      });
-    }
+    let photos = JSON.stringify(this.photoService.getPhotos())
+
+    // for (let index = 0; index < photos.length; index++) {
+    //   imageUrls.push({
+    //     small: photos.,
+    //     medium: photos[index].url,
+    //     big: photos[index].url
+    //   });
+    // }
+    
+    console.log(photos);
+
     return imageUrls;
   }
 }

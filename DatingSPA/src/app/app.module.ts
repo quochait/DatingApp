@@ -3,14 +3,17 @@ import { NgModule } from '@angular/core';
 import { Pipe } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NavComponent } from './nav/nav.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './_services/auth.service';
 import { HomeComponent } from './home/home.component';
+import { VerifyEmailComponent } from './members/verify-email/verify-email.component';
 import { RegisterComponent } from './register/register.component';
 import { ErrorInterceptorProvide } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
+import { AngularFileUploaderModule } from "angular-file-uploader";
+import { PhotoListComponent } from './members/member-edit/photo-list/photo-list.component';
 
 // Angular 8
 // import {
@@ -46,13 +49,19 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
 import { FileUploadModule } from 'ng2-file-upload';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { TokenInterceptor } from './_services/token.interceptor';
+import { VerifyEmailResolver } from './_resolvers/verify-email.resolver';
+import { PhotoUploadResolver } from './_resolvers/photo-upload.resolver';
+// import { TimeagoModule } from 'ngx-timeago';
+import { NgxImageGalleryModule } from 'ngx-image-gallery';
+
 
 // Angular >= 9
-@Pipe({
-    name: 'timeAgo',
-    pure: false
-})
-export class TimeAgoExtendsPipe extends TimeAgoPipe {}
+// @Pipe({
+//     name: 'timeAgoEdit',
+//     pure: false
+// })
+// export class TimeAgoExtendsPipe extends TimeAgoPipe {}
 
 
 export function tokenGetters() {
@@ -71,7 +80,10 @@ export function tokenGetters() {
     MemberCardComponent,
     MemberDetailComponent,
     MemberEditComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+    VerifyEmailComponent,
+    PhotoListComponent,
+    TimeAgoPipe
   ],
   imports: [
     // TooltipModule.forRoot(),
@@ -80,7 +92,10 @@ export function tokenGetters() {
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
     FormsModule,
+    AngularFileUploaderModule,
+    // TimeagoModule.forRoot(),
     BsDropdownModule.forRoot(),
+    NgxImageGalleryModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetters,
@@ -103,7 +118,15 @@ export function tokenGetters() {
     MemberDetailResolver,
     MemberListResolver,
     MemberEditResolver,
-    PreventUnsavedChangesGuard
+    PreventUnsavedChangesGuard,
+    VerifyEmailResolver,
+    PhotoUploadResolver,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+    TimeAgoPipe
   ],
 
   bootstrap: [AppComponent]

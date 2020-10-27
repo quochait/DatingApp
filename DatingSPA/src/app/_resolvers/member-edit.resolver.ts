@@ -19,6 +19,7 @@ export class MemberEditResolver implements Resolve<User> {
     );
   }
 
+
   constructor(
     private userService: UserService,
     private alertify: AlertifyService,

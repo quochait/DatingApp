@@ -3,6 +3,7 @@ import { AuthService } from '../_services/auth.service';
 import { AlertifyService } from '../_services/alertify.service';
 import { Router } from '@angular/router';
 import { User } from '../_models/user';
+import { UserService } from '../_services/user.service';
 
 @Component({
   selector: 'app-nav',
@@ -13,16 +14,21 @@ export class NavComponent implements OnInit {
   model: any = {};
   user: User;
 
-  constructor(public authService: AuthService, private alertify: AlertifyService, private router: Router) {}
+  constructor(
+    public authService: AuthService, 
+    private alertify: AlertifyService, 
+    private router: Router,
+    private userService: UserService
+    ) {}
 
   ngOnInit() {
     const user: User = JSON.parse(localStorage.getItem('user'));
     if (user) {
       this.user = user;
-
-      this.authService.currentMainPhoto.subscribe(res => {
-        this.user.photoUrl = res;
-      });
+      console.log(this.user);
+      // this.authService.currentMainPhoto.subscribe(res => {
+      //   this.user.mainPhotoUrl = res;
+      // });
     }
   }
 
@@ -31,6 +37,7 @@ export class NavComponent implements OnInit {
       next => {
         this.alertify.success('Logged in successfully.');
         this.user = JSON.parse(localStorage.getItem('user'));
+        // console.log(this.user);
       },
       error => {
         this.alertify.error(error);

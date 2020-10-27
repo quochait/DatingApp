@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "G:\\angular\\DatingApp\\DatingAPI\\DatingAPI\\DatingAPI.csproj": {}
+    "C:\\Users\\quoch\\Desktop\\Project\\DatingAPI\\DatingAPI.csproj": {}
   },
   "projects": {
-    "G:\\angular\\DatingApp\\DatingAPI\\DatingAPI\\DatingAPI.csproj": {
+    "C:\\Users\\quoch\\Desktop\\Project\\DatingAPI\\DatingAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\angular\\DatingApp\\DatingAPI\\DatingAPI\\DatingAPI.csproj",
+        "projectUniqueName": "C:\\Users\\quoch\\Desktop\\Project\\DatingAPI\\DatingAPI.csproj",
         "projectName": "DatingAPI",
-        "projectPath": "G:\\angular\\DatingApp\\DatingAPI\\DatingAPI\\DatingAPI.csproj",
+        "projectPath": "C:\\Users\\quoch\\Desktop\\Project\\DatingAPI\\DatingAPI.csproj",
         "packagesPath": "C:\\Users\\quoch\\.nuget\\packages\\",
-        "outputPath": "G:\\angular\\DatingApp\\DatingAPI\\DatingAPI\\obj\\",
+        "outputPath": "C:\\Users\\quoch\\Desktop\\Project\\DatingAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -43,17 +43,25 @@
           "dependencies": {
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
-              "version": "[4.0.1, )"
+              "version": "[5.0.1, )"
             },
             "CloudinaryDotNet": {
               "target": "Package",
-              "version": "[1.9.1, )"
+              "version": "[1.13.1, )"
             },
             "Microsoft.AspNetCore.App": {
               "suppressParent": "All",
               "target": "Package",
               "version": "[2.2.0, )",
               "autoReferenced": true
+            },
+            "Microsoft.AspNetCore.Authentication.Core": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[2.2.0, )"
             },
             "Microsoft.AspNetCore.Razor.Design": {
               "suppressParent": "All",
@@ -64,10 +72,6 @@
               "target": "Package",
               "version": "[2.1.0, )"
             },
-            "Microsoft.IdentityModel.Tokens": {
-              "target": "Package",
-              "version": "[5.6.0, )"
-            },
             "Microsoft.NETCore.App": {
               "suppressParent": "All",
               "target": "Package",
@@ -77,6 +81,18 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[3.0.0, )"
+            },
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.11.3, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.11.3, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
             }
           },
           "imports": [
@@ -89,7 +105,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Photo } from 'src/app/_models/Photo';
-import { FileUploader } from 'ng2-file-upload';
+import { FileItem, FileSelectDirective, FileUploader } from 'ng2-file-upload';
 import { environment } from '../../../environments/environment';
 import { AuthService } from 'src/app/_services/auth.service';
 import { UserService } from 'src/app/_services/user.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
+import { PhotoService } from 'src/app/_services/photo.service';
 
 @Component({
   selector: 'app-photo-editor',
@@ -19,7 +20,12 @@ export class PhotoEditorComponent implements OnInit {
   hasAnotherDropZoneOver = false;
   baseUrl = environment.apiUrl;
 
-  constructor(private authService: AuthService, private userService: UserService, private alertify: AlertifyService) {}
+  constructor(
+    private authService: AuthService, 
+    private userService: UserService, 
+    private alertify: AlertifyService, 
+    private photoService: PhotoService) 
+    { }
 
   ngOnInit() {
     this.uploader = new FileUploader({
@@ -29,11 +35,13 @@ export class PhotoEditorComponent implements OnInit {
       allowedFileType: ['image'],
       removeAfterUpload: true,
       autoUpload: false,
-      maxFileSize: 10 * 1024 * 1024
+      maxFileSize: 10 * 1024 * 1024,
+      disableMultipart: false
     });
 
     this.uploader.onAfterAddingFile = file => {
       file.withCredentials = false;
+      console.log(file.index);
     };
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
@@ -42,15 +50,15 @@ export class PhotoEditorComponent implements OnInit {
         const photo = {
           id: res.id,
           url: res.url,
-          dateAdded: res.dateAdded,
+          createdAt: res.createdAt,
           description: res.description,
-          isMain: res.isMain
+          publicId: res.publicId
         };
 
         this.photos.push(photo);
-        if (photo.isMain) {
-          this.authService.changeMainPhoto(photo.url);
-        }
+        // if (photo.isMain) {
+        //   this.authService.changeMainPhoto(photo.url);
+        // }
       }
     };
   }
@@ -63,31 +71,49 @@ export class PhotoEditorComponent implements OnInit {
     this.hasAnotherDropZoneOver = e;
   }
 
-  setMainPhoto(photo: Photo) {
-    this.userService.setMainPhoto(photo.id).subscribe(
-      res => {
-        this.alertify.success('Update successful');
-        this.currentMain = this.photos.filter(p => p.isMain === true)[0];
-        this.currentMain.isMain = false;
-        photo.isMain = true;
-        this.authService.changeMainPhoto(photo.url);
-      },
-      error => {
-        this.alertify.error(error);
-      }
-    );
-  }
+  // setMainPhoto(photo: Photo) {
+  //   this.userService.setMainPhoto(photo.id).subscribe(
+  //     res => {
+  //       this.alertify.success('Update successful');
+  //       this.currentMain = this.photos.filter(p => p.isMain === true)[0];
+  //       this.currentMain.isMain = false;
+  //       photo.isMain = true;
+  //       this.authService.changeMainPhoto(photo.url);
+  //     },
+  //     error => {
+  //       this.alertify.error(error);
+  //     }
+  //   );
+  // }
 
-  deletePhoto(id: number) {
-    this.userService.deletePhoto(id).subscribe(
-      res => {
-        const index = this.photos.findIndex(p => p.id === id);
-        this.photos.splice(index, 1);
-        this.alertify.success('Detele Photo successful');
-      },
-      err => {
-        this.alertify.error('Failed to delete photo.');
-      }
-    );
+  // deletePhoto(id: number) {
+  //   this.userService.deletePhoto(id).subscribe(
+  //     res => {
+  //       const index = this.photos.findIndex(p => p.id === id);
+  //       this.photos.splice(index, 1);
+  //       this.alertify.success('Detele Photo successful');
+  //     },
+  //     err => {
+  //       this.alertify.error('Failed to delete photo.');
+  //     }
+  //   );
+  // }
+
+  uploads(event: any) {
+
+    for (let index = 0; index < this.uploader.queue.length; index++) {
+      // console.log(this.uploader.queue[index]._file);
+      let data = new FormData();
+      let fileItem = this.uploader.queue[index]._file;
+      data.append('file', fileItem);
+      this.photoService.uploadPhoto(data).subscribe(
+        res => {
+          this.alertify.success(fileItem.name);
+        }
+      )
+    }
+
+    this.alertify.success("Upload finished.");
+    this.uploader.clearQueue();
   }
 }

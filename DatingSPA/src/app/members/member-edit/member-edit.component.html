@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="row mb-3">
     <div class="col-sm-4 text-center">
-      <h1>{{ user.knownAs }}'s Profile</h1>
+      <h1>{{ user.username }}'s Profile</h1>
     </div>
     <div class="col-sm-8">
       <div class="alert alert-info" *ngIf="editForm.dirty">
@@ -14,7 +14,7 @@
     <div class="col-sm-4">
       <div class="card">
         <img
-          src="{{ user.photoUrl || '../../../assets/default.png' }}"
+          src="{{ user.mainPhotoUrl || '../../../assets/default.png' }}"
           alt="{{ user.knownAs }}"
           class="card-img-top img-thumbnail"
         />
@@ -29,11 +29,11 @@
           </div>
           <div>
             <strong>Last Active:</strong>
-            <p>{{ user.lastActive | timeAgoEdit }}</p>
+            <p>{{ user.lastActive | timeAgo }}</p>
           </div>
           <div>
             <strong>Member since:</strong>
-            <p>{{ user.created | date: 'mediumDate' }}</p>
+            <p>{{ user.createdAt | date: 'mediumDate' }}</p>
           </div>
         </div>
         <div class="card-footer text-center">
@@ -98,13 +98,30 @@
               </div>
             </form>
           </tab>
-          <tab heading="Photos">
+
+          <tab heading="Gallery" class="justify-content-center">
+            <ngx-gallery 
+              #ngxgallery
+              (change)="changeUrlToSetAvatart($event)" 
+              [options]="galleryOptions" 
+              [images]="galleryImages">
+            </ngx-gallery>
+            <button (click)="updateMainPhoto()" class="text-center btn btn-success"> Set avatar </button> 
+            <!-- <app-photo-list [photos]="photos"></app-photo-list> -->
+            
+          </tab>
+
+          <tab heading="Upload photo">
             <app-photo-editor
-              [photos]="user.photos"
               class="justify-content-center"
             ></app-photo-editor>
             <!-- <p>Photo will go here</p> -->
           </tab>
+
+          <tab heading="Email Confirmation">
+              <app-verify-email></app-verify-email>
+          </tab>
+          
         </tabset>
       </div>
     </div>

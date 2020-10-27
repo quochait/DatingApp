@@ -13,8 +13,8 @@ export class AuthService {
   baseUrl = environment.apiUrl + 'auth/';
   jwtHelper = new JwtHelperService();
   decodeToken: any;
-  photoUrl = new BehaviorSubject<string>('../../assets/default.png');
-  currentMainPhoto = this.photoUrl.asObservable();
+  mainPhotoUrl = new BehaviorSubject<string>('../../assets/default.png');
+  currentMainPhoto = this.mainPhotoUrl.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -26,8 +26,8 @@ export class AuthService {
           localStorage.setItem('token', user.token);
           this.decodeToken = this.jwtHelper.decodeToken(user.token);
           localStorage.setItem('user', JSON.stringify(user.user));
-          // console.log(JSON.stringify(user));
-          this.changeMainPhoto(user.user.photoUrl);
+          this.changeMainPhoto(user.user.mainPhotoUrl);
+          // console.log(user.user.mainPhotoUrl);
         }
       })
     );
@@ -48,11 +48,15 @@ export class AuthService {
   }
 
   changeMainPhoto(photoUrl: string) {
-    this.photoUrl.next(photoUrl);
+    this.mainPhotoUrl.next(photoUrl);
     const user: User = JSON.parse(localStorage.getItem('user'));
     if (user) {
-      user.photoUrl = photoUrl;
+      user.mainPhotoUrl = photoUrl;
       localStorage.setItem('user', JSON.stringify(user));
     }
+  }
+
+  sendEmailVerify(){
+    // this.http.post();
   }
 }

@@ -11,7 +11,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class MemberDetailResolver implements Resolve<User> {
   resolve(route: ActivatedRouteSnapshot): Observable<User> {
-    return this.userService.getUser(+route.paramMap.get('id')).pipe(
+    return this.userService.getUser(route.paramMap.get('id')).pipe(
       catchError(error => {
         this.alertify.error('Problem retrieving your data');
         this.router.navigate(['/members']);
