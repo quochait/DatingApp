@@ -19,7 +19,6 @@ export class MemberListComponent implements OnInit {
 
   ngOnInit() {
     this.loadUsers();
-    console.log(this.loadUsers());
   }
 
   pageChanged(event: any) {

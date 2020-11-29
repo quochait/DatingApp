@@ -6,6 +6,7 @@ using AutoMapper;
 using DatingAPI.Data;
 using DatingAPI.Dtos;
 using DatingAPI.Helpers;
+using DatingAPI.Models.Relationship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,13 +18,15 @@ namespace DatingAPI.Controllers
   [ApiController]
   public class UserController : ControllerBase
   {
-    private readonly IUserServices _userServices;
     private IMapper _mapper;
+    private readonly IUserServices _userServices;
+    private readonly IAuthenticationServices _authenticationServices;
 
-    public UserController(IUserServices userServices, IMapper mapper)
+    public UserController(IUserServices userServices, IMapper mapper, IAuthenticationServices authenticationServices)
     {
       _userServices = userServices;
       _mapper = mapper;
+      _authenticationServices = authenticationServices;
     }
 
     [HttpGet("{userId}")]
@@ -38,7 +41,9 @@ namespace DatingAPI.Controllers
     [HttpGet("getUsers")]
     public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
     {
-      var users = await _userServices.GetUsers(userParams);
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+      var users = await _userServices.GetUsers(userId, userParams);
       var usersToReturn = _mapper.Map<List<UserForListDto>>(users);
 
       Response.AddPagitation(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
@@ -69,7 +74,7 @@ namespace DatingAPI.Controllers
     }
 
     [HttpPost("{userId}/setMain")]
-    public async Task<IActionResult> SetMainPhoto(string userId, [FromForm]string photoUrl)
+    public async Task<IActionResult> SetMainPhoto(string userId, [FromForm] string photoUrl)
     {
       if (userId != User.FindFirst(ClaimTypes.NameIdentifier).Value)
       {
@@ -94,6 +99,55 @@ namespace DatingAPI.Controllers
       {
         return BadRequest("Could set photo to main");
       }
+    }
+
+    [HttpGet("{userId}/getEmailVerify")]
+    public async Task<IActionResult> GetEmailVerify(string userId)
+    {
+      var user = await _userServices.GetUser(userId);
+      if (user == null)
+      {
+        BadRequest("Not found user.");
+      }
+
+      if (_authenticationServices.SendTokenVerifyEmail(user.ObjectId, user.Email))
+      {
+        return Ok();
+      }
+
+      return BadRequest("Can't send email to: " + user.Email);
+    }
+
+    [HttpGet("{userId}/checkToken/{token}")]
+    public IActionResult CheckTokenVerifyEmail(string userId, string token)
+    {
+      var result = _authenticationServices.CheckTokenEmail(userId, token);
+      
+      if (result.True)
+      {
+        return Ok();
+      }
+
+      return BadRequest(result.Error);
+    }
+
+    [HttpPost("{userId}/getMatch")]
+    public async Task<IActionResult> CreateMatch(string userId, [FromForm] string userDest)
+    {
+      if (await _userServices.CreateMatchToUser(userId, userDest))
+      {
+        return Ok();
+      }
+
+      return BadRequest();
+    }
+
+    [HttpPost("{userId}/getStatusRelationship")]
+    public async Task<IActionResult> GetStatusRelationship(string userId, [FromForm] string userDest)
+    {
+      RelationshipModel relationship = await _userServices.GetStatus(userId, userDest);
+      
+      return Ok(relationship);
     }
   }
 }

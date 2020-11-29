@@ -18,7 +18,6 @@ G:\angular\DatingApp\DatingAPI\DatingAPI\obj\Debug\netcoreapp2.2\DatingAPI.pdb
 C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\appsettings.Development.json
 C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\appsettings.json
 C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\Models\UserSeedData.json
-C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\Properties\launchSettings.json
 C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.deps.json
 C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.runtimeconfig.json
 C:\Users\quoch\Desktop\Project\DatingAPI\bin\Debug\netcoreapp2.2\DatingAPI.runtimeconfig.dev.json

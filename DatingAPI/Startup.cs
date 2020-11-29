@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +14,12 @@ using DatingAPI.MongoHelper;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DatingAPI.Services.Photo;
+using DatingAPI.Hubs;
+using DatingAPI.Services.Group;
+using DatingAPI.Services.Message;
+using Microsoft.AspNet.SignalR;
+using Microsoft.Extensions.Primitives;
+using System.Threading.Tasks;
 
 namespace DatingAPI
 {
@@ -43,6 +48,8 @@ namespace DatingAPI
       services.AddScoped<IAuthenticationServices, AuthenticationServices>();
       services.AddScoped<IUserServices, UserServices>();
       services.AddScoped<IPhotoServices, PhotoServices>();
+      services.AddScoped<IGroupServices, GroupServices>();
+      services.AddScoped<IMessageServices, MessageServices>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
           AddJwtBearer(options =>
@@ -54,13 +61,27 @@ namespace DatingAPI
               ValidateIssuer = false,
               ValidateAudience = false
             };
-          });
+            options.Events = new JwtBearerEvents()
+            {
+              OnMessageReceived = context =>
+              {
+                if (context.Request.Query.TryGetValue("token", out StringValues token))
+                {
+                  context.Token = token;
+                }
+                return Task.CompletedTask;
+              }
+            };
+          })
+          ;
 
       services.AddScoped<LogUserActivity>();
       services.AddTransient<IMongoContext, MongoContext>();
-      //Mapper.Initialize(cfg => cfg.AddProfile<AutoMapperProfiles>());
       services.AddAutoMapper();
       services.AddMvc();
+      services.AddMemoryCache();
+      services.AddSignalR();
+      
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,13 +113,31 @@ namespace DatingAPI
 
       app.UseHttpsRedirection();
       app
-        .UseCors(x => x.WithOrigins("http://localhost:4200", "http://192.168.1.148:4200", "http://192.168.80.109:4200")
+        .UseCors(
+        x =>
+        x
+        .WithOrigins(
+        "http://localhost:4200",
+        "http://192.168.1.148:4200",
+        "http://192.168.43.109:4200",
+        "https://192.168.43.109:4200",
+        "http://172.16.171.100:4200",
+        "https://172.16.171.100:4200"
+        )
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials());
 
       app.UseAuthentication();
       app.UseMvc();
+      app.UseSignalR(routes =>
+      {
+        routes.MapHub<SignalrHub>("/chathub", map =>
+        {
+          //var hubConfiguration = new HubConfiguration();
+
+        });
+      });
     }
   }
 }

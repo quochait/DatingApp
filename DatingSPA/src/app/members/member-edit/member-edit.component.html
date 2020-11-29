@@ -118,7 +118,7 @@
             <!-- <p>Photo will go here</p> -->
           </tab>
 
-          <tab heading="Email Confirmation">
+          <tab heading="Email Confirmation" *ngIf="this.showFormGetTokenEmail">
               <app-verify-email></app-verify-email>
           </tab>
           

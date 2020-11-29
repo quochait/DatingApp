@@ -25,7 +25,6 @@ export class NavComponent implements OnInit {
     const user: User = JSON.parse(localStorage.getItem('user'));
     if (user) {
       this.user = user;
-      console.log(this.user);
       // this.authService.currentMainPhoto.subscribe(res => {
       //   this.user.mainPhotoUrl = res;
       // });

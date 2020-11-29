@@ -13,7 +13,16 @@ namespace DatingAPI.Helpers
       var resultContext = await next();
       var userId = resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
       var userServices = resultContext.HttpContext.RequestServices.GetService<IUserServices>();
-      await userServices.UpdateActivity(userId);
+      try
+      {
+        await userServices.UpdateActivity(userId);
+      }
+      catch (System.Exception ex)
+      {
+
+        throw ex;
+      }
+      
     }
   }
 }

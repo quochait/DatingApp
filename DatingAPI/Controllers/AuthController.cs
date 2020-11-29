@@ -2,6 +2,8 @@
 using DatingAPI.Data;
 using DatingAPI.Dtos;
 using DatingAPI.Models;
+using DatingAPI.Models.Authen;
+using DatingAPI.Models.Result;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -45,9 +47,8 @@ namespace DatingAPI.Controllers
 
       var userToCreate = _mapper.Map<UserModel>(userForRegisterDto);
       var userId = await _authenServices.Register(userToCreate, userForRegisterDto.Password);
-      var userToReturn = _mapper.Map<UserForDetailedDto>(userToCreate);
 
-      return CreatedAtRoute("GetUser", new { controller = "User", id = userId }, userToReturn);
+      return Ok();
     }
 
     [HttpPost("login")]
@@ -74,7 +75,7 @@ namespace DatingAPI.Controllers
       var tokenDescriptor = new SecurityTokenDescriptor()
       {
         Subject = new ClaimsIdentity(claims),
-        Expires = DateTime.Now.AddHours(1),
+        Expires = DateTime.Now.AddHours(2),
         SigningCredentials = creds
       };
 
@@ -86,6 +87,46 @@ namespace DatingAPI.Controllers
         token = tokenHandler.WriteToken(token),
         user
       });
+    }
+
+    [HttpPost("sendTokenResetPassword")]
+    public async Task<IActionResult> GetTokenResetPassword([FromForm] string email)
+    {
+      AuthenticationModel result = await _authenServices.GetUser(email);
+      if (result != null)
+      {
+        bool isVerify = await _userServices.IsVerify(email);
+        if (isVerify)
+        {
+          _authenServices.SendTokenResetPassword(result.UserId, email);
+          return Ok();
+        }
+
+        return BadRequest("Email is not verify.");
+      }
+
+      return BadRequest("Not found user.");
+    }
+
+    [HttpPost("verifyTokenResetPassword")]
+    public async Task<IActionResult> CheckTokenResetPassword([FromForm] string email, [FromForm] string token, [FromForm] string password)
+    {
+      AuthenticationModel authenModel = await _authenServices.GetUser(email);
+      if (authenModel == null)
+      {
+        return BadRequest("User email not exists");
+      }
+
+      string userId = authenModel.UserId;
+
+      ResultModel result = _authenServices.CheckTokenReset(userId, token);
+      if (result.True)
+      {
+        await _authenServices.UpdatePassword(userId, password);
+        return Ok();
+      }
+
+      return BadRequest(result.Error);
     }
   }
 }

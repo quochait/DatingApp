@@ -21,4 +21,8 @@ export class PhotoService {
 	getPhotos() {
 		return this.http.get<Photo[]>(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/photos' + '/getPhotos');
 	}
+
+	getPhotosDetail(userId: string){
+		return this.http.get<Photo[]>(this.baseUrl + '/' + userId + '/photos' + '/getPhotos');
+	}
 }

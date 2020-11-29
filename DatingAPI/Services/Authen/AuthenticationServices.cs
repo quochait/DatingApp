@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using DatingAPI.Models;
 using DatingAPI.Models.Authen;
-using DatingAPI.MongoHelper;
+using DatingAPI.Models.Result;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
@@ -15,13 +21,21 @@ namespace DatingAPI.Data
   {
     private IMongoCollection<AuthenticationModel> _authenCollection;
     private IMongoCollection<UserModel> _userCollection;
+    private IMemoryCache _memoryCache;
+    private IConfiguration configuration;
+    private string cacheTokenVerifyEmail = "tokenVerifyEmail";
+    private string cacheTokenReset = "tokenResetPassword";
+    private string cacheKey = "CachedModel";
+    private object existingItem;
 
-    public AuthenticationServices(IConfiguration _config, IMongoContext mongoContext)
+    public AuthenticationServices(IConfiguration _config, IMemoryCache memoryCache)
     {
       var _mongoClient = new MongoClient(_config.GetSection("DatingSettings:ConnectionString").Value);
       var _database = _mongoClient.GetDatabase(_config.GetSection("DatingSettings:DatabaseName").Value);
       _authenCollection = _database.GetCollection<AuthenticationModel>(typeof(AuthenticationModel).Name);
       _userCollection = _database.GetCollection<UserModel>(typeof(UserModel).Name);
+      configuration = _config;
+      _memoryCache = memoryCache;
     }
 
     public async Task<string> Login(string email, string password)
@@ -114,10 +128,279 @@ namespace DatingAPI.Data
       return true;
     }
 
-    public async Task<bool> VerifyEmail(string email)
+    public async Task<AuthenticationModel> GetUser(string email)
     {
+      AuthenticationModel authenModel = await _authenCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
+      return authenModel;
+    }
+    public bool SendTokenVerifyEmail(string userId, string email)
+    {
+      string randomString = RandomString(128);
+      string hashedRandomString = CreateStringMD5(randomString);
+
+      // add memcached
+      CacheModel cache = new CacheModel(userId, cacheTokenVerifyEmail, hashedRandomString);
+      UpdateCached(cache);
+
+      string urlToCheck = configuration.GetSection("Hosts:UrlClientVerifyEmail").Value + hashedRandomString;
+
+      using (var mailMessage = new MailMessage())
+      {
+        using (var client = new SmtpClient("smtp.gmail.com", 587))
+        {
+          //provide credentials
+          string emailFrom = configuration.GetSection("EmailSettings:EmailFrom").Value;
+          string password = configuration.GetSection("EmailSettings:Password").Value;
+
+          client.Credentials = new NetworkCredential(emailFrom, password);
+          client.EnableSsl = true;
+
+          // configure the mail message
+          mailMessage.From = new MailAddress(emailFrom);
+          mailMessage.To.Add(new MailAddress(email));
+          mailMessage.Subject = "VERIFY EMAIL DATING APPLICATION";
+          mailMessage.Body = "Click to verify email DatingApp: " + urlToCheck;
+
+          //send email
+          try
+          {
+            client.Send(mailMessage);
+            return true;
+          }
+          catch (Exception)
+          {
+            return false;
+          }
+        }
+      }
+    }
+
+    public bool SendTokenResetPassword(string userId, string email)
+    {
+      string randomString = RandomString(128);
+      string hashedRandomString = CreateStringMD5(randomString);
+
+      // Add cache
+      CacheModel cache = new CacheModel(userId, cacheTokenReset, hashedRandomString);
+      UpdateCached(cache);
+
+      string urlToCheck = configuration.GetSection("Hosts:UrlClientResetPassword").Value + hashedRandomString;
+
+      using (var mailMessage = new MailMessage())
+      {
+        using (var client = new SmtpClient("smtp.gmail.com", 587))
+        {
+          //provide credentials
+          string emailFrom = configuration.GetSection("EmailSettings:EmailFrom").Value;
+          string password = configuration.GetSection("EmailSettings:Password").Value;
+
+          client.Credentials = new NetworkCredential(emailFrom, password);
+          client.EnableSsl = true;
+
+          // configure the mail message
+          mailMessage.From = new MailAddress(emailFrom);
+          mailMessage.To.Add(new MailAddress(email));
+          //mailMessage.Subject = "VERIFY EMAIL DATING APPLICATION";
+          mailMessage.Subject = "RESET PASSWORD DATING APPLICATION";
+          mailMessage.Body = "Click to reset password DatingApp: " + urlToCheck;
+
+          //send email
+          try
+          {
+            client.Send(mailMessage);
+            return true;
+          }
+          catch (Exception)
+          {
+            return false;
+          }
+        }
+      }
+    }
+
+    private string CreateStringMD5(string input)
+    {
+      using (MD5 md5 = MD5.Create())
+      {
+        byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+        byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < hashBytes.Length; i++)
+        {
+          sb.Append(hashBytes[i].ToString("X2"));
+        }
+
+        return sb.ToString();
+      }
+    }
+
+    private string RandomString(int length)
+    {
+      Random random = new Random();
+      const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      return new string(Enumerable.Repeat(chars, length)
+        .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    public ResultModel CheckTokenEmail(string userId, string token)
+    {
+      ResultModel result = new ResultModel();
+      //get value to check
+      CacheModel cache = GetCached(userId, cacheTokenVerifyEmail);
+      if (cache != null)
+      {
+        if (cache.Value == token)
+        {
+          result.True = true;
+
+          //update user email
+          FilterDefinition<UserModel> filter = Builders<UserModel>.Filter.Eq(u => u.ObjectId, userId);
+          UpdateDefinition<UserModel> update = Builders<UserModel>.Update.Set(u => u.IsVerifyEmail, true);
+          var _ = _userCollection.FindOneAndUpdate(filter, update);
+
+          return result;
+        }
+        else
+        {
+          result.Error = "Token not matched.";
+          return result;
+        }
+      }
+      else
+      {
+        result.Error = "Token Expiration";
+        return result;
+      }
+    }
+
+    //backup =)) dm
+    //public ResultModel CheckTokenEmail(string userId, string token)
+    //{
+    //  ResultModel result = new ResultModel();
+    //  //get value to check
+
+    //  if (_memoryCache.TryGetValue(cacheTokenVerifyEmail, out existingItem))
+    //  {
+    //    string _value = existingItem.ToString();
+    //    if (_value == token)
+    //    {
+    //      result.True = true;
+
+    //      //update user email
+    //      FilterDefinition<UserModel> filter = Builders<UserModel>.Filter.Eq(u => u.ObjectId, userId);
+    //      UpdateDefinition<UserModel> update = Builders<UserModel>.Update.Set(u => u.IsVerifyEmail, true);
+    //      var _ = _userCollection.FindOneAndUpdate(filter, update);
+
+    //      return result;
+    //    }
+    //    else
+    //    {
+    //      result.Error = "Token not matched.";
+    //      return result;
+    //    }
+    //  }
+    //  else
+    //  {
+    //    result.Error = "Token Expiration";
+    //    return result;
+    //  }
+    //}
+
+    public ResultModel CheckTokenReset(string userId, string token)
+    {
+      ResultModel result = new ResultModel();
+      CacheModel cache = GetCached(userId, cacheTokenReset);
+      if (cache != null)
+      {
+        if (cache.Value == token)
+        {
+          result.True = true;
+          return result;
+        }
+        else
+        {
+          result.Error = "Token not matched.";
+          return result;
+        }
+      }
+      else
+      {
+        result.Error = "Token Expiration";
+      }
+
+      return result;
+    }
+
+    public async Task<bool> UpdatePassword(string userId, string newPassword)
+    {
+      PasswordModel passwordModel = CreatePasswordHash(newPassword);
+      FilterDefinition<AuthenticationModel> filter = Builders<AuthenticationModel>.Filter.Eq(u => u.UserId, userId);
+      AuthenticationModel authenModel = await _authenCollection.Find(filter).FirstOrDefaultAsync();
+      if (authenModel != null)
+      {
+        UpdateDefinition<AuthenticationModel> update = Builders<AuthenticationModel>.Update.
+          Set(au => au.PasswordHash, passwordModel.PasswordHash).
+          Set(au => au.PasswordSalt, passwordModel.PasswordSalt);
+        await _authenCollection.FindOneAndUpdateAsync(filter, update);
+        return true;
+      }
 
       return false;
+    }
+
+    private bool UpdateCached(CacheModel cacheUpdate)
+    {
+      CacheModel cache = new CacheModel();
+      List<CacheModel> caches = new List<CacheModel>();
+
+      if (_memoryCache.TryGetValue<List<CacheModel>>("CachedModel", out caches))
+      {
+        //cache = caches.Where(x => x.UserId == cacheUpdate.UserId && x.Name == cacheUpdate.Name).FirstOrDefault();
+        caches.Where(x => x.UserId == cacheUpdate.UserId && x.Name == cacheUpdate.Name).ToList().ForEach(c => c.Value = cacheUpdate.Value);
+      }
+      else
+      {
+        cache = cacheUpdate;
+        caches = new List<CacheModel>();
+        caches.Add(cache);
+      }
+
+      _memoryCache.Set(cacheKey, caches.ToList(), new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(10)));
+
+      return true;
+    }
+
+    private CacheModel GetCached(string userId, string name)
+    {
+      List<CacheModel> caches = new List<CacheModel>();
+
+      try
+      {
+        caches = _memoryCache.Get("CachedModel") as List<CacheModel>;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+
+      try
+      {
+        CacheModel cache = caches.Where(x => x.UserId == userId && x.Name == name).FirstOrDefault();
+        //caches.Remove(cache);
+        //_memoryCache.Set(cacheKey, caches.ToList(), new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(10)));
+        return cache;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
+    private void RemoveCached(string userId, string name)
+    {
+      List<CacheModel> caches = new List<CacheModel>();
+      caches.RemoveAll(x => x.UserId == userId && x.Name == name);
     }
   }
 

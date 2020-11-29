@@ -14,6 +14,7 @@ import { NgxGalleryComponent } from 'ngx-gallery';
   templateUrl: './member-edit.component.html',
   styleUrls: ['./member-edit.component.css']
 })
+
 export class MemberEditComponent implements OnInit {
   @ViewChild('editForm') editForm: NgForm;
   user: User;
@@ -21,6 +22,7 @@ export class MemberEditComponent implements OnInit {
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
   urlPhotoToChange: string;
+  showFormGetTokenEmail: boolean = true;
 
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm.dirty) {
@@ -43,11 +45,6 @@ export class MemberEditComponent implements OnInit {
       this.photos = res.photos;
     });
 
-    // this.authService.currentMainPhoto.subscribe(res => {
-    //   console.log(res);
-    //   this.user.mainPhotoUrl = res;
-    // });
-
     this.galleryOptions = [
       {
         width: '100%',
@@ -65,6 +62,13 @@ export class MemberEditComponent implements OnInit {
 
     this.galleryImages = this.getImages();
     this.urlPhotoToChange = this.photos[0].url;
+
+    if(this.user.isVerifyEmail == true)
+    {
+      this.showFormGetTokenEmail = false;  
+    }
+    
+    console.log(this.showFormGetTokenEmail);
   }
 
   updateUser() {
@@ -81,15 +85,15 @@ export class MemberEditComponent implements OnInit {
 
   updateMainPhoto() {
     this.user.mainPhotoUrl = this.urlPhotoToChange; 
-        this.userService.setMainPhoto(this.urlPhotoToChange).subscribe(
-          res => {
-            this.alertify.success('Update successful');
-            this.authService.changeMainPhoto(this.urlPhotoToChange);
-          },
-          error => {
-            this.alertify.error(error);
-          }
-        );
+    this.userService.setMainPhoto(this.urlPhotoToChange).subscribe(
+      res => {
+        this.alertify.success('Update successful');
+        this.authService.changeMainPhoto(this.urlPhotoToChange);
+      },
+      error => {
+        this.alertify.error(error);
+      }
+    );
   }
 
   getImages() {
@@ -114,5 +118,9 @@ export class MemberEditComponent implements OnInit {
 
   deleteImage(event){
 
+  }
+
+  showConfirmEmail(){
+    
   }
 }

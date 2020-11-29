@@ -1,4 +1,5 @@
-﻿using DatingAPI.Models.Base;
+﻿using DatingAPI.Enumerate;
+using DatingAPI.Models.Base;
 
 namespace DatingAPI.Models.Relationship
 {
@@ -6,6 +7,6 @@ namespace DatingAPI.Models.Relationship
   {
     public string FromUserId { get; set; }
     public string ToUserId { get; set; }
-    public string Status { get; set; }
+    public string Status { get; set; } = EnumRelationships.Pending.ToString();
   }
 }

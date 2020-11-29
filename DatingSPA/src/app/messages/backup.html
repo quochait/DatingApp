@@ -1,0 +1,25 @@
+<div class="container-flex">
+  <div class="row w-100 m-0">
+    <div class="col-5 col-sm-4 col-md-3 col-lg-2 p-0" id="left">
+      <div class="border rounded text-center font-weight-bold">
+        Dating messenger
+      </div>
+      <div *ngFor="let user of users" class="border">
+        <button class="row" (click)="getContentUser(user.objectId)">
+          <div class="col-sm-2 text-center">
+            <img src="{{ user.mainPhotoUrl || '../../../../assets/default.png' }}" class="avatarMessage rouded-circle">
+          </div>
+          <div class="col-sm-9 ml-1 text-center justify-content-center my-auto">
+            <p style="vertical-align: middle" class="m-0 font-weight-bold">
+              {{ user.username }}
+            </p>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="col-7 col-sm-8 col-md-9 col-lg-10" id="right">
+      <!-- message hub -->
+
+    </div>
+  </div>
+</div>

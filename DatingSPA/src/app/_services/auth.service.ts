@@ -27,7 +27,6 @@ export class AuthService {
           this.decodeToken = this.jwtHelper.decodeToken(user.token);
           localStorage.setItem('user', JSON.stringify(user.user));
           this.changeMainPhoto(user.user.mainPhotoUrl);
-          // console.log(user.user.mainPhotoUrl);
         }
       })
     );
@@ -56,7 +55,18 @@ export class AuthService {
     }
   }
 
-  sendEmailVerify(){
-    // this.http.post();
+  getTokenResetPassword(email: string){
+    let form = new FormData();
+    form.append('email', email);
+    localStorage.setItem("email", email);
+    return this.http.post(this.baseUrl + 'sendTokenResetPassword', form);
+  }
+
+  newPassword(newPassword: string, email: string, token: string){
+    let form = new FormData();
+    form.append('email', email);
+    form.append('password', newPassword);
+    form.append('token', token);
+    return this.http.post(this.baseUrl + 'verifyTokenResetPassword', form);
   }
 }

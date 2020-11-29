@@ -48,7 +48,7 @@ export class PhotoEditorComponent implements OnInit {
       if (response) {
         const res: Photo = JSON.parse(response);
         const photo = {
-          id: res.id,
+          objectId: res.objectId,
           url: res.url,
           createdAt: res.createdAt,
           description: res.description,

@@ -8,7 +8,15 @@ namespace DatingAPI.Models.Message
     public string Status { get; set; }
     public string GroupId { get; set; }
     public string UserId { get; set; }
-    public int Type { get; set; }
+    //default sent
+    public bool Type { get; set; } = true;
     public string PhotoId { get; set; }
+    public MessageModel(string groupId, string userId, string toUserId, string msg)
+    {
+      Content = msg;
+      UserId = userId;
+      UserId = toUserId;
+      GroupId = groupId;
+    }
   }
 }

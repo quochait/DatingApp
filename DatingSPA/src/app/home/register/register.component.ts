@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AuthService } from '../_services/auth.service';
-import { AlertifyService } from '../_services/alertify.service';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { AuthService } from '../../_services/auth.service';
+import { AlertifyService } from '../../_services/alertify.service';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { User } from '../_models/user';
+import { User } from '../../_models/user';
 import { Router } from '@angular/router';
 
 @Component({
@@ -32,8 +32,8 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.formBuilder.group(
       {
         email: ['', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
-        username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],
-        password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],
+        username: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]],
+        password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]],
         gender: ['male', Validators.required],
         dateOfBirth: [null, Validators.required],
         city: ['', Validators.required],
@@ -67,7 +67,6 @@ export class RegisterComponent implements OnInit {
   }
 
   cancel() {
-    this.cancelRegister.emit(false);
-    console.log('Hide register form.');
+    this.cancelRegister.emit();
   }
 }

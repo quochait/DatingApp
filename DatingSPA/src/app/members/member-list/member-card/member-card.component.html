@@ -3,7 +3,7 @@
     <img src="{{ user.mainPhotoUrl || '../../../assets/default.png' }}" alt="{{ user.knownAs }}" class="card-img-top" />
     <ul class="list-inline member-icons animate text-center">
       <li class="list-inline-item">
-        <button class="btn btn-primary" [routerLink]="['/member/', user.id]">
+        <button class="btn btn-primary" [routerLink]="['/member/', user.objectId]">
           <i class="fa fa-user"></i>
         </button>
       </li>
@@ -22,7 +22,7 @@
   <div class="card-body p-1">
     <h6 class="card-title text-center mb-1">
       <i class="fa fa-user"></i>
-      {{ user.knownAs }}, {{ user.age }}
+      {{ user.username }}, {{ user.age }}
     </h6>
     <p class="card-text text-muted text-center">{{ user.city }}</p>
   </div>

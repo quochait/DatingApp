@@ -1,5 +1,5 @@
 export interface Photo {
-  id: string;
+  objectId: string;
   url: string;
   description: string;
   createdAt: Date;

@@ -1,0 +1,172 @@
+ul {
+  list-style: none;
+  padding: 0px;
+}
+
+.content {
+  overflow-x: hidden;
+}
+
+.messages {
+  height: 100%;
+  /* max-height: 100%; */
+  overflow-y: scroll;
+  overflow-x: hidden;
+  overflow: auto;
+}
+
+.messages ul li {
+  letter-spacing: 0.4px;
+
+}
+
+@media screen and (max-width: 735px) {
+  .messages {
+    max-height: calc(100% - 105px);
+  }
+
+  .messages ul li.sent p {
+    max-width: 90%;
+  }
+
+  .chat-body .wrap {
+    height: 60px;
+  }
+}
+
+@media screen and (min-width: 736px) {
+  .messages ul li.sent p {
+    /* max-width: 90%; */
+  }
+}
+
+.messages::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.messages ul {
+  /* max-height: calc(100% - 100px); */
+  overflow-x: hidden;
+  overflow-y: scroll;
+  /* max-height: literal("-moz-calc(100% - 50px)");
+  max-height: literal("-webkit-calc(100% - 50px)");
+  max-height: literal("calc(100% - 50px)"); */
+}
+
+.messages ul li {
+  display: inline-block;
+  clear: both;
+  margin: 15px 15px 5px 15px;
+  width: calc(100% - 25px);
+  font-size: 0.9em;
+}
+
+.messages ul li:nth-last-child(1) {
+  margin-bottom: 20px;
+}
+
+.messages ul li.sent img {
+  margin: 6px 8px 0 0;
+}
+
+.messages ul li.sent p {
+  background: linear-gradient(to right, #fd716c, #ffaa4b);
+  color: #f5f5f5;
+
+}
+
+.messages ul li.replies img {
+  float: right;
+  margin: 6px 0 0 8px;
+}
+
+.messages ul li.replies p {
+  background: #f5f5f5;
+  float: right;
+}
+
+.messages ul li img {
+  width: 22px;
+  border-radius: 50%;
+  float: left;
+}
+
+.messages ul li p {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 20px;
+  /* max-width: 205px; */
+  max-width: 65%;
+  line-height: 130%;
+}
+
+@media screen and (min-width: 735px) {
+  /* .messages ul li p {
+  } */
+}
+
+.chat-body .wrap {
+  width: 100%;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.chat-body .messages{ 
+  /* //min-height: 770px; */
+}
+
+.chat-body .wrap .contact-profile {
+  height: 60px;
+  line-height: 60px;
+  overflow: hidden;
+  transition: 0.3s height ease;
+}
+
+.chat-body .wrap .contact-profile img {
+  width: 50px;
+  border-radius: 50%;
+  float: left;
+  margin-right: 10px;
+  padding: 3px;
+  transition: 0.3s border ease;
+  height: 50px;
+}
+
+.chat-body .wrap .contact-profile p {
+  float: left;
+  margin-left: 15px;
+}
+
+.message-input {
+  float: left;
+  width: 100%;
+  line-height: 35px;
+  background-color: red;
+  padding: 10px;
+}
+
+.message-input input {
+  width: 90%;
+  margin-left: 20px;
+  border-radius: 25px;
+  margin-right: 10px;
+  border: 1px solid white;
+  
+}
+
+.message-input button {
+  float: right;
+  width: 60px;
+  background: linear-gradient(to right, #fd716c , #ffaa4b);
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.message-input button:hover {
+  background: pink;
+}

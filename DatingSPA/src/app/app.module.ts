@@ -9,11 +9,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './_services/auth.service';
 import { HomeComponent } from './home/home.component';
 import { VerifyEmailComponent } from './members/verify-email/verify-email.component';
-import { RegisterComponent } from './register/register.component';
+import { RegisterComponent } from './home/register/register.component';
 import { ErrorInterceptorProvide } from './_services/error.interceptor';
 import { AlertifyService } from './_services/alertify.service';
 import { AngularFileUploaderModule } from "angular-file-uploader";
 import { PhotoListComponent } from './members/member-edit/photo-list/photo-list.component';
+import { ResetPasswordComponent } from './home/reset-password/reset-password.component';
+import { ChatContentCompoent } from './messages/chat-content/chat-content.component';
 
 // Angular 8
 // import {
@@ -36,7 +38,7 @@ import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
 import { MemberListComponent } from './members/member-list/member-list.component';
-import { MemberCardComponent } from './members/member-card/member-card.component';
+import { MemberCardComponent } from './members/member-list/member-card/member-card.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
@@ -54,6 +56,8 @@ import { VerifyEmailResolver } from './_resolvers/verify-email.resolver';
 import { PhotoUploadResolver } from './_resolvers/photo-upload.resolver';
 // import { TimeagoModule } from 'ngx-timeago';
 import { NgxImageGalleryModule } from 'ngx-image-gallery';
+import { ChatService } from './_services/chat.service';
+import { NewPassword } from './home/reset-password/update-password/new-password.component';
 
 
 // Angular >= 9
@@ -83,7 +87,10 @@ export function tokenGetters() {
     PhotoEditorComponent,
     VerifyEmailComponent,
     PhotoListComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    ResetPasswordComponent,
+    ChatContentCompoent,
+    NewPassword
   ],
   imports: [
     // TooltipModule.forRoot(),
@@ -99,8 +106,8 @@ export function tokenGetters() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetters,
-        whitelistedDomains: ['localhost:44305'],
-        blacklistedRoutes: ['localhost:44305/api/auth']
+        whitelistedDomains: ['localhost:5001'],
+        blacklistedRoutes: ['localhost:5001/api/auth']
       }
     }),
     TabsModule.forRoot(),
@@ -114,6 +121,7 @@ export function tokenGetters() {
     AuthService,
     AlertifyService,
     ErrorInterceptorProvide,
+    ChatService,
     AuthGuard,
     MemberDetailResolver,
     MemberListResolver,

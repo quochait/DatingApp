@@ -28,6 +28,7 @@ export class UserService {
       .get<User[]>(this.baseUrl + '/' + 'getUsers', { observe: 'response', params })
       .pipe(
         map(response => {
+          // console.log(response);
           paginatedResult.result = response.body;
 
           if (response.headers.get('Pagination') != null) {
@@ -56,7 +57,6 @@ export class UserService {
   }
 
   setMainPhoto(photoUrl: string) {
-    // console.log(photoUrl);
     let form = new FormData();
     form.append('photoUrl', photoUrl);
     return this.http.post(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/setMain', form);
@@ -64,5 +64,13 @@ export class UserService {
 
   deletePhoto(id: number) {
     return this.http.delete(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/photos/' + id);
+  }
+
+  getEmaiVerifyToken(){
+    return this.http.get(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/getEmailVerify');
+  }
+
+  checkTokenEmail(token: string){
+    return this.http.get(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/checkToken/' + token);
   }
 }

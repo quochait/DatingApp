@@ -32,7 +32,7 @@ namespace DatingAPI.Controllers
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
     {
-      var users = await _userServices.GetUsers(userParams);
+      var users = await _userServices.GetUsers("12312312", userParams);
       var usersToReturn = _mapper.Map<List<UserForListDto>>(users);
 
       Response.AddPagitation(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
