@@ -31,14 +31,7 @@ export class MessagesComponent implements OnInit {
     this.route.data.subscribe(res => {
       this.model = res.users;
       this.user = res.user;
-      // this.latestMessage = res.lastMessage;
-      // console.log(res.lastMessage);
-      // this.modelView
-      //this.modelView["test"]
-      
     });
-
-    // this.messageService.getLatestMessage()
 
     if(this.model.length > 0){
       this.userToChild = this.model[0];

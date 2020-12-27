@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Injectable, Input, NgZone, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, HostListener, Injectable, Input, NgZone, Output, ViewChild } from "@angular/core";
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Message } from 'src/app/_models/message';
@@ -23,6 +23,7 @@ export class ChatContentCompoent {
   contentMessage: string;
   hubUrl: string = environment.hubUrl;
 
+  @ViewChild('mainContents', {read: ElementRef, static:false}) elementView: ElementRef;
   @Input() userToChat: User = null;
   @Output('latestMessage') latestMessageEvent = new EventEmitter<Message>(); 
   @HostListener('window:resize', ['$event'])
@@ -37,7 +38,9 @@ export class ChatContentCompoent {
     private _ngZone: NgZone
   ){}
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.scrollToBottom();
+    
     this.chatService.getListMessage(this.userToChat.objectId).subscribe(msg => {
       this.messages = msg;
     });
@@ -46,6 +49,13 @@ export class ChatContentCompoent {
       this._ngZone.run(() => {
         this.messages.push(res);
         this.latestMessageEvent.emit(res);
+        
+        // Scroll to bottom
+        // console.log(this.elementView.nativeElement.scrollHeight);
+        // let height = this.elementView.nativeElement.scrollHeight + 1000;
+        // console.log(height);
+        // this.elementView.nativeElement.scrollTop = height;
+        this.scrollToBottom();
       })
     });
 
@@ -68,5 +78,12 @@ export class ChatContentCompoent {
     }
 
     return classList;
+  }
+
+  scrollToBottom(): void {
+    try {
+        console.log(this.elementView.nativeElement.scrollHeight);
+        this.elementView.nativeElement.scrollTop = this.elementView.nativeElement.scrollHeight - 1;
+    } catch(err) { }                 
   }
 }
