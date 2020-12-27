@@ -131,5 +131,51 @@ namespace DatingAPI.Data
       }
       return true;
     }
+
+    public async Task<List<UserModel>> GetRequestMatches(string userId)
+    {
+      try
+      {
+        FilterDefinition<RelationshipModel> filter = Builders<RelationshipModel>
+        .Filter.Where(r => r.Status == EnumRelationships.Pending.ToString() && r.FromUserId == userId);
+        List<RelationshipModel> relationships = await _relationshipCollection.Find(filter).ToListAsync();
+        if (relationships != null)
+        {
+          List<UserModel> users = new List<UserModel>();
+          foreach (RelationshipModel relationship in relationships)
+          {
+            FilterDefinition<UserModel> filterUser = Builders<UserModel>
+              .Filter.Where(u => u.ObjectId.ToString() == relationship.FromUserId.ToString());
+            UserModel user = await _userCollection.Find(filterUser).FirstOrDefaultAsync();
+            users.Add(user);
+          }
+
+          return users;
+        }
+
+        return null;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
+    public async Task<bool> UpdateStatusMatched(string userId, string fromUserId)
+    {
+      try
+      {
+        FilterDefinition<RelationshipModel> filter = Builders<RelationshipModel>
+          .Filter.Where(r => r.ToUserId == userId && r.FromUserId == fromUserId && r.Status == EnumRelationships.Pending.ToString());
+        UpdateDefinition<RelationshipModel> update = Builders<RelationshipModel>.Update.Set(r => r.Status, EnumRelationships.Matched.ToString());
+        RelationshipModel relationship = await _relationshipCollection.FindOneAndUpdateAsync(filter, update);
+
+        return true;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
   }
 }

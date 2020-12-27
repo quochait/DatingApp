@@ -6,6 +6,7 @@ using AutoMapper;
 using DatingAPI.Data;
 using DatingAPI.Dtos;
 using DatingAPI.Helpers;
+using DatingAPI.Models;
 using DatingAPI.Models.Relationship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -122,7 +123,7 @@ namespace DatingAPI.Controllers
     public IActionResult CheckTokenVerifyEmail(string userId, string token)
     {
       var result = _authenticationServices.CheckTokenEmail(userId, token);
-      
+
       if (result.True)
       {
         return Ok();
@@ -146,8 +147,32 @@ namespace DatingAPI.Controllers
     public async Task<IActionResult> GetStatusRelationship(string userId, [FromForm] string userDest)
     {
       RelationshipModel relationship = await _userServices.GetStatus(userId, userDest);
-      
+
       return Ok(relationship);
+    }
+
+    [HttpGet("getRequestsMatches")]
+    public async Task<IActionResult> GetRequestMatches()
+    {
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+      List<UserModel> users = await _userServices.GetRequestMatches(userId);
+
+      return Ok(users);
+    }
+
+    [HttpPost("updateStatusMatch")]
+    public async Task<IActionResult> UpdateStatusMatchToUser(string fromUserId)
+    {
+      string userId = User.FindFirst(ClaimTypes.Name).Value;
+
+      if (await _userServices.UpdateStatusMatched(userId, fromUserId))
+      {
+        return Ok();
+      }
+      else
+      {
+        return BadRequest();
+      }
     }
   }
 }

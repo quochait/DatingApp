@@ -17,5 +17,7 @@ namespace DatingAPI.Data
     Task<RelationshipModel> GetStatus(string userId, string userDest);
     Task<List<UserModel>> GetMatches(string userId);
     Task<bool> IsVerify(string email);
+    Task<List<UserModel>> GetRequestMatches(string userId);
+    Task<bool> UpdateStatusMatched(string userId, string userDest);
   }
 }
