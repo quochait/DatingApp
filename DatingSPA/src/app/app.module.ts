@@ -102,7 +102,7 @@ export function tokenGetters() {
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, { useHash: true }),
     FormsModule,
     AngularFileUploaderModule,
     // TimeagoModule.forRoot(),
