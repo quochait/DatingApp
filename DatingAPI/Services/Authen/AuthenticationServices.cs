@@ -158,6 +158,7 @@ namespace DatingAPI.Data
           string emailFrom = configuration.GetSection("EmailSettings:EmailFrom").Value;
           string password = configuration.GetSection("EmailSettings:Password").Value;
 
+          client.UseDefaultCredentials = false;
           client.Credentials = new NetworkCredential(emailFrom, password);
           client.EnableSsl = true;
 
