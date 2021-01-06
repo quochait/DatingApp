@@ -33,11 +33,11 @@ export class MessagesComponent implements OnInit {
   async ngOnInit() {
     this.route.data.subscribe(res => {
       this.model = res.users;
-      console.log(this.model);
       this.user = res.user;
     });
 
     if(this.model.length > 0){
+      console.log(this.model);
       this.userToChild = this.model[0];
 
       for (let index = 0; index < this.model.length; index++) {
@@ -55,7 +55,7 @@ export class MessagesComponent implements OnInit {
       if (this.model[index].objectId == userId) {
       //  console.log(this.model[index]);
        this.userToChild = this.model[index];
-       console.log(this.userToChild)
+      //  console.log(this.userToChild)
       }
     }
   }
