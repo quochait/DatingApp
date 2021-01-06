@@ -42,9 +42,11 @@ export class MessagesComponent implements OnInit {
 
       for (let index = 0; index < this.model.length; index++) {
         let objectId = this.model[index]["objectId"];
+        console.log(this.model[index])
         let content = 'New message...';
         this.messageService.getLatestMessage(objectId).subscribe(res => {
-          this.model[index]["latestMessage"] = res;
+          console.log(res)
+          this.model[index]["latestMessage"] = res || '';
         })
       }
     }

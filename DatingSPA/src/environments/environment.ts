@@ -6,8 +6,8 @@ import { HttpHeaders } from '@angular/common/http';
 
 export const environment = {
   production: false,
-  hubUrl: 'http://192.168.10.110:5001/chathub',
-  apiUrl: 'http://192.168.10.110:5001/api/',
+  hubUrl: 'http://192.168.1.252:5001/chathub',
+  apiUrl: 'http://192.168.1.252:5001/api/',
   httpOptionsJson: {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   }
