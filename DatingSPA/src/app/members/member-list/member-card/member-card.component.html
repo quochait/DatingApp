@@ -8,12 +8,12 @@
         </button>
       </li>
       <li class="list-inline-item">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" (click)="sendRequestMatch(user.objectId)">
           <i class="fa fa-heart"></i>
         </button>
       </li>
       <li class="list-inline-item">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" [routerLink]="['/messages']">
           <i class="fa fa-envelope"></i>
         </button>
       </li>

@@ -55,4 +55,14 @@ export class RequestsComponent implements OnInit{
       this.alertifyService.error("Can't accept relationship.");
     });
   }
+
+  deny(userId){
+    this.userService.denyRequest(userId).subscribe(() => {
+      this.alertifyService.success("Deny success.");
+      this.disableBtnAccept = true;
+      this.disableBtnDeny = true;
+    }, error => {
+      this.alertifyService.error("Can't remove request.");
+    })
+  }
 }

@@ -8,5 +8,7 @@ namespace DatingAPI.Services.Relationship
   {
     Task<List<RelationshipModel>> GetRequestsPending(string userId);
     Task<bool> UpdateRequestStatus(string userId, string fromUserId, string status);
+    Task<RelationshipModel> CheckHaveRequest(string userId, string toUserId);
+    Task<bool> RemoveRelationship(string userId,string toUserId);
   }
 }

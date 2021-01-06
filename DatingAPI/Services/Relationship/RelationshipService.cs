@@ -57,5 +57,29 @@ namespace DatingAPI.Services.Relationship
         return false;
       }
     }
+
+    public async Task<RelationshipModel> CheckHaveRequest(string userId, string toUserId)
+    {
+      FilterDefinition<RelationshipModel> filter = Builders<RelationshipModel>
+         .Filter.Where(r => (r.ToUserId == userId && r.FromUserId == toUserId) || (r.FromUserId == userId && r.ToUserId == toUserId));
+      var result = await _relationshipCollection.Find(filter).FirstOrDefaultAsync();
+      return result;
+    }
+
+    public async Task<bool> RemoveRelationship(string userId, string toUserId)
+    {
+      try
+      {
+        FilterDefinition<RelationshipModel> filter = Builders<RelationshipModel>
+        .Filter.Where(r => r.ToUserId == userId && r.FromUserId == toUserId && r.Status == EnumRelationships.Pending.ToString());
+        var result = await _relationshipCollection.DeleteOneAsync(filter);
+        return true;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      
+    }
   }
 }

@@ -138,6 +138,14 @@ namespace DatingAPI.Controllers
       return BadRequest("Can't send email to: " + user.Email);
     }
 
+    [HttpGet("haveRequest/{toUserId}")]
+    public async Task<IActionResult> IsHaveRequest(string toUserId)
+    {
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value.ToString();
+      RelationshipModel relationship = await _relationshipService.CheckHaveRequest(userId, toUserId);
+      return Ok(relationship);
+    }
+
     [HttpGet("{userId}/checkToken/{token}")]
     public IActionResult CheckTokenVerifyEmail(string userId, string token)
     {
@@ -234,6 +242,18 @@ namespace DatingAPI.Controllers
         }
       }
 
+      return BadRequest();
+    }
+
+    [HttpGet("denyrequest/{toUserId}")]
+    public async Task<IActionResult> RemoveRequest(string toUserId)
+    {
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value.ToString();
+      var _ = await _relationshipService.RemoveRelationship(userId, toUserId);
+      if (_)
+      {
+        return Ok();
+      }
       return BadRequest();
     }
   }

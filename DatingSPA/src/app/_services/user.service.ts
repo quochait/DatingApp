@@ -77,4 +77,7 @@ export class UserService {
   updateRelationship(toUserId: string){
     return this.http.get(this.baseUrl + '/updateRelationship/' + toUserId);
   }
+  denyRequest(userId){
+    return this.http.get(this.baseUrl + '/denyrequest/'+userId);
+  }
 }

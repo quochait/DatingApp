@@ -47,10 +47,10 @@
             <div class="card-footer text-center">
               <div class="btn-group d-flex">
                 <button [disabled]="this.disableBtnAccept" class="btn btn-success w-100" (click)="updateRelationship(this.userForces.objectId)"> Accept</button>
-                <button [disabled]="this.disableBtnDeny" class="btn btn-danger w-100"> Deny </button>
+                <button [disabled]="this.disableBtnDeny" class="btn btn-danger w-100" (click)="deny(this.userForces.objectId)"> Deny </button>
               </div>
               <div class="btn-group d-flex mt-2">
-                <button class="btn btn-light w-100"> Read more... </button>
+                <button class="btn btn-light w-100" [routerLink]="['/member/',this.userForces.objectId]"> Read more... </button>
               </div>
             </div>
           </div>

@@ -29,4 +29,9 @@ export class RelationshipService {
   getListPending(){
     return this.http.get(this.baseUrl + '/getRequestsPending');
   }
+
+  haveRequest(toUserId)
+  {
+    return this.http.get(this.baseUrl + '/haveRequest/' + toUserId);
+  }
 }
