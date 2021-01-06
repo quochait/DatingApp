@@ -20,6 +20,7 @@ using DatingAPI.Services.Message;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Extensions.Primitives;
 using System.Threading.Tasks;
+using DatingAPI.Services.Relationship;
 
 namespace DatingAPI
 {
@@ -44,12 +45,15 @@ namespace DatingAPI
             opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             //opt.se
           });
+      Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+
       //services.AddMvcCore().AddNewtonsoftJson();
       services.AddScoped<IAuthenticationServices, AuthenticationServices>();
       services.AddScoped<IUserServices, UserServices>();
       services.AddScoped<IPhotoServices, PhotoServices>();
       services.AddScoped<IGroupServices, GroupServices>();
       services.AddScoped<IMessageServices, MessageServices>();
+      services.AddScoped<IRelationshipService, RelationshipService>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
           AddJwtBearer(options =>
@@ -112,21 +116,11 @@ namespace DatingAPI
       }
 
       app.UseHttpsRedirection();
-      app
-        .UseCors(
-        x =>
-        x
-        .WithOrigins(
-        "http://localhost:4200",
-        "http://192.168.1.148:4200",
-        "http://192.168.43.109:4200",
-        "https://192.168.43.109:4200",
-        "http://172.16.171.100:4200",
-        "https://172.16.171.100:4200"
-        )
+      app.UseCors( x=> x
+        .AllowAnyOrigin()
         .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
+        .AllowAnyMethod().AllowCredentials()
+        );
 
       app.UseAuthentication();
       app.UseMvc();
@@ -134,8 +128,7 @@ namespace DatingAPI
       {
         routes.MapHub<SignalrHub>("/chathub", map =>
         {
-          //var hubConfiguration = new HubConfiguration();
-
+          
         });
       });
     }

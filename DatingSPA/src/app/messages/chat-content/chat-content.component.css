@@ -170,3 +170,7 @@ ul {
 .message-input button:hover {
   background: pink;
 }
+emoji-mart.active-emoji{
+  position: absolute;
+  top:100px;
+}

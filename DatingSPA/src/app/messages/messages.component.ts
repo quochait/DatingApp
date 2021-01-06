@@ -1,11 +1,13 @@
 //import { Message } from '@angular/compiler/src/i18n/i18n_ast';
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../_models/user';
 import { ChatService } from '../_services/chat.service';
 import { MessageService } from '../_services/message.service';
 import { Message } from './../_models/message';
+import { ChatContentCompoent } from './chat-content/chat-content.component';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-messages',
@@ -13,12 +15,13 @@ import { Message } from './../_models/message';
   styleUrls: ['./messages.component.css']
 })
 export class MessagesComponent implements OnInit {
-  // users: User[];
+  userForces: string;
   user: User;
   userToChild: User;
   messages: Message[];
   latestMessage: Message[];
   model: any;
+  @ViewChild(ChatContentCompoent) chat:ChatContentCompoent;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,6 +33,7 @@ export class MessagesComponent implements OnInit {
   async ngOnInit() {
     this.route.data.subscribe(res => {
       this.model = res.users;
+      console.log(this.model);
       this.user = res.user;
     });
 
@@ -41,7 +45,6 @@ export class MessagesComponent implements OnInit {
         let content = 'New message...';
         this.messageService.getLatestMessage(objectId).subscribe(res => {
           this.model[index]["latestMessage"] = res;
-          console.log(res.content);
         })
       }
     }
@@ -50,17 +53,28 @@ export class MessagesComponent implements OnInit {
   loadMessageUser(userId: string){
     for (let index = 0; index < this.model.length; index++) {
       if (this.model[index].objectId == userId) {
-       console.log(this.model[index]);
+      //  console.log(this.model[index]);
        this.userToChild = this.model[index];
+       console.log(this.userToChild)
       }
     }
   }
 
   updateMessage(msg){
+    
+    // console.log($("#mainContents").prop("scrollHeight"));
     for (let index = 0; index < this.model.length; index++) {
+      console.log(this.model[index]['latestMessage']['groupId']);
       if(this.model[index]["latestMessage"]["groupId"] == msg["groupId"]){
         this.model[index]["latestMessage"] = msg;
+        let idcontact = "#"+this.model[index]["latestMessage"]["groupId"];
+        // console.log(idcontact);
+        $(idcontact).detach().prependTo("#list-contacts");
       }
     }
+    console.log(this.model[0])
+
+    
+
   }
 }

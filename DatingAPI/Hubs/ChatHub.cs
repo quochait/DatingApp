@@ -50,6 +50,12 @@ namespace DatingAPI.Hubs
       await _messageServices.Insert(message);
     }
 
+    //public async Task LogUserActivity(string toUserId)
+    //{
+    //  string userId = Context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+      
+    //}
+
     public override async Task OnConnectedAsync()
     {
       await Groups.AddToGroupAsync(Context.ConnectionId, Context.User.FindFirst(ClaimTypes.NameIdentifier).Value);

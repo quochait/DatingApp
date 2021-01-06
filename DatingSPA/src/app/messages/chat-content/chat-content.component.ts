@@ -7,7 +7,8 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 import { ChatService } from 'src/app/_services/chat.service';
 import { MessageService } from 'src/app/_services/message.service';
 import { environment } from './../../../environments/environment';
-
+import { PickerModule } from '@ctrl/ngx-emoji-mart'
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-chat-content',
@@ -19,9 +20,9 @@ export class ChatContentCompoent {
   user: User;
   messages: Message[] = [];
   innerHeight: number;
-
-  contentMessage: string;
+  contentMessage: string = '';
   hubUrl: string = environment.hubUrl;
+  showEmojiPicker = false;
 
   @ViewChild('mainContents', {read: ElementRef, static:false}) elementView: ElementRef;
   @Input() userToChat: User = null;
@@ -31,36 +32,50 @@ export class ChatContentCompoent {
     this.innerHeight = window.innerHeight - 205;
   }
 
+  height: number;
+
   constructor(
     private chatService: ChatService,
-    private messageService: MessageService,
-    private alertify: AlertifyService,
     private _ngZone: NgZone
   ){}
 
   ngOnInit() {
-    this.scrollToBottom();
     
     this.chatService.getListMessage(this.userToChat.objectId).subscribe(msg => {
       this.messages = msg;
+      this.height = $("#mainContents").prop("scrollHeight");
+      console.log(this.height);
+      $("#mainContents").scrollTop($("#mainContents").prop("scrollHeight"));
     });
 
     this.chatService.messageReceived.subscribe(res => {
+      console.log($("#mainContents").prop("scrollHeight"))
       this._ngZone.run(() => {
         this.messages.push(res);
         this.latestMessageEvent.emit(res);
-        
-        // Scroll to bottom
-        // console.log(this.elementView.nativeElement.scrollHeight);
-        // let height = this.elementView.nativeElement.scrollHeight + 1000;
-        // console.log(height);
-        // this.elementView.nativeElement.scrollTop = height;
-        this.scrollToBottom();
+      });
+
+      this._ngZone.runOutsideAngular(() => {
+        console.log($("#mainContents").prop("scrollHeight"))
       })
+     
+      $("#mainContents").scrollTop($("#mainContents").prop("scrollHeight"));
     });
 
     this.innerHeight = window.innerHeight - 205;
   }
+
+  ngOnChanges(): void {
+    this.chatService.getListMessage(this.userToChat.objectId).subscribe(msg => {
+      this.messages = msg;
+    });
+  }
+
+  ngAfterViewInit(): void {
+    import('./extension.js');
+  }
+
+
 
   async ngOnDestroy() {
     this.chatService.disconnected();    
@@ -80,10 +95,20 @@ export class ChatContentCompoent {
     return classList;
   }
 
-  scrollToBottom(): void {
-    try {
-        console.log(this.elementView.nativeElement.scrollHeight);
-        this.elementView.nativeElement.scrollTop = this.elementView.nativeElement.scrollHeight - 1;
-    } catch(err) { }                 
+  scrollToBottom(index) {
+    $("#mainContents").scrollTop($("#mainContents").prop("scrollHeight"));
+    $("#mainContents").scrollTop(100000);
+
+  }
+
+  toggleEmojiPicker(){
+    this.showEmojiPicker = !this.showEmojiPicker;
+    // console.log("[>] click.")
+  }
+
+  addEmoji(event){
+    const text = event.emoji.native;
+    this.contentMessage += " " + text;
+    this.showEmojiPicker = !this.showEmojiPicker; 
   }
 }

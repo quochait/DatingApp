@@ -16,6 +16,7 @@ import { AngularFileUploaderModule } from "angular-file-uploader";
 import { PhotoListComponent } from './members/member-edit/photo-list/photo-list.component';
 import { ResetPasswordComponent } from './home/reset-password/reset-password.component';
 import { ChatContentCompoent } from './messages/chat-content/chat-content.component';
+import { RequestsComponent } from './requests/requests.component';
 
 // Angular 8
 // import {
@@ -30,6 +31,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 // import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ListsComponent } from './lists/lists.component';
@@ -58,6 +60,7 @@ import { PhotoUploadResolver } from './_resolvers/photo-upload.resolver';
 import { NgxImageGalleryModule } from 'ngx-image-gallery';
 import { ChatService } from './_services/chat.service';
 import { NewPassword } from './home/reset-password/update-password/new-password.component';
+import { IconsModule } from './icons/icons.module';
 
 
 // Angular >= 9
@@ -90,10 +93,12 @@ export function tokenGetters() {
     TimeAgoPipe,
     ResetPasswordComponent,
     ChatContentCompoent,
-    NewPassword
+    NewPassword,
+    RequestsComponent
   ],
   imports: [
     // TooltipModule.forRoot(),
+    IconsModule,
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -102,12 +107,11 @@ export function tokenGetters() {
     AngularFileUploaderModule,
     // TimeagoModule.forRoot(),
     BsDropdownModule.forRoot(),
+    PickerModule,
     NgxImageGalleryModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetters,
-        whitelistedDomains: ['localhost:5001'],
-        blacklistedRoutes: ['localhost:5001/api/auth']
       }
     }),
     TabsModule.forRoot(),

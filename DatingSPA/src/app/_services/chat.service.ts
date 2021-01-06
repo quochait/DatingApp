@@ -13,7 +13,6 @@ export class ChatService {
   basaApi: string = environment.apiUrl + 'message';
 
   connectionId: string;
-  // initMessage: Message =  new Message();
 
   messageReceived = new EventEmitter<Message>();
   newLatestMessageReceived = new EventEmitter<Message>();
@@ -67,11 +66,16 @@ export class ChatService {
 
   private registerOnServerEvents(): void {
     this._hubConnection.on('UpdateMessage', (data: any) => {
+      // console.log(data);
       this.messageReceived.emit(data);
-      //this.newLatestMessageReceived.emit(data);
     });
+
+    // this._hubConnection.on('LogUserActivity', (data: any) => {
+
+    // });
   }
 
+  // private registerOnServerEvent
   public disconnected(){
     //this._hubConnection();
   }
@@ -79,4 +83,8 @@ export class ChatService {
   public getListMessage(toUserId: string){
     return this.http.get<Message[]>(this.basaApi + '/listMessages/' + toUserId);
   }
+
+  // public updateUserOffline(toUserId: string){
+  //   return this.http.get(this.basaApi + '/')
+  // }
 }

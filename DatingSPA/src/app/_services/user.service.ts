@@ -73,4 +73,8 @@ export class UserService {
   checkTokenEmail(token: string){
     return this.http.get(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/checkToken/' + token);
   }
+
+  updateRelationship(toUserId: string){
+    return this.http.get(this.baseUrl + '/updateRelationship/' + toUserId);
+  }
 }

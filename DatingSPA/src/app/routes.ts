@@ -19,6 +19,8 @@ import { MessageResolver } from './_resolvers/message.resolver';
 import { ChatContentCompoent } from './messages/chat-content/chat-content.component';
 import { LatestMessageResolver } from './_resolvers/latest-message.resolver';
 import { NewPassword } from './home/reset-password/update-password/new-password.component';
+import { RequestsComponent } from './requests/requests.component';
+import { RequestsResolver } from './_resolvers/requests.resolver';
 
 
 export const appRoutes: Routes = [
@@ -26,15 +28,18 @@ export const appRoutes: Routes = [
   {
     path: 'resetPassword/:token',
     component: NewPassword
-    // resolve: {}
   },
   {
     path: '',
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      { path: 'members', component: MemberListComponent, resolve: { users: MemberListResolver } },
-
+      { path: 'members', component: MemberListComponent, 
+        resolve: 
+        { 
+          users: MemberListResolver 
+        } 
+      },
       {
         path: 'member/edit',
         component: MemberEditComponent,
@@ -48,7 +53,11 @@ export const appRoutes: Routes = [
       },
       {
         path: 'member/:id', component: MemberDetailComponent,
-        resolve: { user: MemberDetailResolver, photos: PhotosDetailResolver, relationship: RelationshipResolver }
+        resolve: { 
+          user: MemberDetailResolver,
+          photos: PhotosDetailResolver, 
+          relationship: RelationshipResolver 
+        }
       },
       {
         path: 'messages', component: MessagesComponent,
@@ -56,6 +65,11 @@ export const appRoutes: Routes = [
           user: MemberEditResolver, 
           users: MessageResolver,
         }
+      },
+      {
+        path: 'requests',
+        component: RequestsComponent,
+        resolve: { requestsPending: RequestsResolver}
       },
       { path: 'lists', component: ListsComponent },
     ]

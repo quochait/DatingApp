@@ -1,0 +1,82 @@
+<!-- <div class="row requests-body">
+  <div class="col-sm-4 offset-2" id="requests">
+    <div class="list-requests-pending" *ngIf="!this.noRequests">
+      <ul>
+        <li *ngFor="let user of this.data['requestsPending']['users']">
+          <button (click)="showRequest(user.objectId)">
+            <strong>{{ user.username }} </strong> đang muốn kết bạn với bạn.
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="this.noRequests" id="summary-none-requests">
+      <h1>No requests match </h1>
+    </div>
+  </div>
+
+  <div class="col-sm-4" class="preview">
+    <div>
+      <span>{{ this.requestConetent }}</span>
+    </div>
+  </div>
+</div> -->
+
+<div class="messaging">
+  <div class="inbox_msg">
+    <div class="inbox_people">
+      <div class="inbox_chat">
+        <div class="chat_list">
+          <div class="chat_people" *ngFor="let user of this.data['requestsPending']['users']"
+            (click)="showRequest(user.objectId)">
+            <div class="chat_img"> <img src="{{ user.mainPhotoUrl || '../../../../assets/default.png' }}" alt="sunil">
+            </div>
+            <div class="chat_ib">
+              <strong>{{ user.username }} </strong> đang muốn kết bạn với bạn.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="mesgs">
+      <div class="row" *ngIf="this.userForces">
+        <div class="col-sm-4">
+          <div class="card">
+            <img src="{{ this.userForces.mainPhotoUrl || '../../../assets/default.png' }}"
+              alt="{{ this.userForces.username }}" class="card-img-top img-thumbnail" />
+            <div class="card-footer text-center">
+              <div class="btn-group d-flex">
+                <button [disabled]="this.disableBtnAccept" class="btn btn-success w-100" (click)="updateRelationship(this.userForces.objectId)"> Accept</button>
+                <button [disabled]="this.disableBtnDeny" class="btn btn-danger w-100"> Deny </button>
+              </div>
+              <div class="btn-group d-flex mt-2">
+                <button class="btn btn-light w-100"> Read more... </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <div class="card-body">
+            <div>
+              <strong>Location: </strong>
+              <p>{{ this.userForces.city }}, {{ this.userForces.country }}</p>
+            </div>
+            <div>
+              <strong>Age: </strong>
+              <p>{{ this.userForces.age }}</p>
+            </div>
+            <div>
+              <strong>Description: </strong>
+              <p>{{ this.userForces.introduction }}</p>
+            </div>
+            <div>
+              <strong>Interests: </strong>
+              <!-- <p>{{ this.userForces.created | date: 'mediumDate' }}</p> -->
+              <p>{{ this.userForces.interests }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

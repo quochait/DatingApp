@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../_services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,8 @@ export class HomeComponent implements OnInit {
   summaryMode = true;
   resetMode = false;
   values: any;
-  constructor() {}
+
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {}
 
@@ -31,5 +33,14 @@ export class HomeComponent implements OnInit {
 
   cancelResetPasswordMode(){
     this.resetToggle();
+  }
+
+  isLogon(){
+    if(this.authService.loggedIn()){
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }

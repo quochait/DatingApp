@@ -30,9 +30,11 @@
 		</div>
 		<div id="contacts">
 			<ul>
-				<div *ngIf="this.model.length > 0">
-					<button (click)="loadMessageUser(this.user.objectId)">
-						<li class="contact" *ngFor="let user of this.model">
+				<div *ngIf="this.model.length > 0" id="list-contacts">
+					<button (click)="loadMessageUser(this.user.objectId)" *ngFor="let user of this.model" id="{{user['latestMessage']['groupId']}}">
+						<li class="contact" [ngClass]="{
+							forces: this.userToChild.objectId == this.user.objectId
+						}">
 							<div class="wrap">
 								<span class="contact-status online"></span>
 								<img src="{{ this.user.mainPhotoUrl || '../../../../assets/default.png'}}" />

@@ -1,7 +1,10 @@
-body {
+::ng-deep body{
+  overflow: hidden;
+}
+
+/* body {
   align-items: center;
   justify-content: center;
-  /* min-height: 100vh; */
   background: #ffffff;
   font-family: "proxima-nova", "Source Sans Pro", sans-serif;
   font-size: 1em;
@@ -10,7 +13,8 @@ body {
   text-rendering: optimizeLegibility;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
   -webkit-font-smoothing: antialiased;
-}
+  overflow: hidden;
+} */
 
 #frame {
   width: 100%;
@@ -275,6 +279,8 @@ body {
   }
 }
 
+
+
 #frame #sidepanel #profile .wrap #status-options ul li#status-online span.status-circle {
   background: #2ecc71;
 }
@@ -433,10 +439,9 @@ body {
   border: none;
 }
 
-/* #frame #sidepanel #contacts ul li.contact:hover {
-  background: linear-gradient(to right, #fd716c, #ffaa4b);
-} */
-
+#frame #sidepanel #contacts ul li.contact:hover {
+  background: blue;
+} 
 
 @media screen and (max-width: 735px) {
   #frame #sidepanel #contacts ul button li.contact {
@@ -444,15 +449,21 @@ body {
   }
 }
 
-
-
 #frame #sidepanel #contacts ul button li:hover {
-  background: linear-gradient(to right, #fd716c, #ffaa4b);
+  /* background: linear-gradient(to right, #fd716c, #ffaa4b); */
+}
+
+#frame #sidepanel #contacts ul button li.contact.forces{
+  background-color: #7d7d7d;
+  color: white;
+}
+
+#frame #sidepanel #contacts ul button li.contact.forces .wrap img {
+  background-color: white;
 }
 
 #frame #sidepanel #contacts ul button li.contact.active {
   background: linear-gradient(to right, #fd716c, #ffaa4b);
-  /* border-right: 5px solid #435f7a; */
 }
 
 #frame #sidepanel #contacts ul button li.contact.active span.contact-status {

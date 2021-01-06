@@ -43,7 +43,9 @@ export class NewPassword implements OnInit {
     return g.get('password').value === g.get('confirmPassword').value ? null : { mismatch: true };
   }
 
-  cancel(){}
+  cancel(){
+    this.router.navigate(['/']);
+  }
 
   updatePassword(){
     let model = Object.assign({}, this.newPasswordForm.value);

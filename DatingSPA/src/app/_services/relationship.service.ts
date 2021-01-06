@@ -25,4 +25,8 @@ export class RelationshipService {
     form.append('userDest', userId);
     return this.http.post<Relationship>(this.baseUrl + '/' + this.authService.decodeToken.nameid + '/getStatusRelationship', form);
   }
+
+  getListPending(){
+    return this.http.get(this.baseUrl + '/getRequestsPending');
+  }
 }

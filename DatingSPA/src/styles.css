@@ -54,10 +54,11 @@
 }
 
 html{ 
-  overflow: hidden;
+  /* overflow: hidden; */
   height: 100%;
 }
 
-body {
+::ng-deep body {
   height: 100%;
+  overflow: auto;
 }

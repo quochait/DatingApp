@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DatingAPI.Data;
 using DatingAPI.Dtos;
+using DatingAPI.Enumerate;
 using DatingAPI.Helpers;
 using DatingAPI.Models;
 using DatingAPI.Models.Relationship;
+using DatingAPI.Services.Group;
+using DatingAPI.Services.Relationship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,12 +25,23 @@ namespace DatingAPI.Controllers
     private IMapper _mapper;
     private readonly IUserServices _userServices;
     private readonly IAuthenticationServices _authenticationServices;
+    private readonly IRelationshipService _relationshipService;
+    private readonly string UserId;
+    private readonly IGroupServices _groupService;
 
-    public UserController(IUserServices userServices, IMapper mapper, IAuthenticationServices authenticationServices)
+    public UserController(
+      IUserServices userServices,
+      IMapper mapper,
+      IAuthenticationServices authenticationServices,
+      IRelationshipService relationshipService,
+      IGroupServices groupServices)
     {
       _userServices = userServices;
       _mapper = mapper;
       _authenticationServices = authenticationServices;
+      _relationshipService = relationshipService;
+      _groupService = groupServices;
+      //UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
     }
 
     [HttpGet("{userId}")]
@@ -173,6 +187,46 @@ namespace DatingAPI.Controllers
       {
         return BadRequest();
       }
+    }
+
+    [HttpGet("getRequestsPending")]
+    public async Task<IActionResult> GetRequestsPending()
+    {
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+      RelationshipUsersDto relationshipToReturn = new RelationshipUsersDto();
+
+      List<UserModel> users = new List<UserModel>();
+      relationshipToReturn.Relationships = await _relationshipService.GetRequestsPending(userId);
+      if (relationshipToReturn.Relationships != null)
+      {
+        foreach (RelationshipModel relationship in relationshipToReturn.Relationships)
+        {
+          UserModel user = await _userServices.GetUser(relationship.FromUserId.ToString());
+          users.Add(user);
+        }
+
+        relationshipToReturn.Users = users;
+      }
+
+      return Ok(relationshipToReturn);
+    }
+
+    [HttpGet("updateRelationship/{toUserId}")]
+    public async Task<IActionResult> UpdateRelationship(string toUserId)
+    {
+      string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+      UserModel user = await _userServices.GetUser(toUserId);
+      if (user != null)
+      {
+        await _groupService.InitGroup(userId, toUserId);
+        bool result = await _relationshipService.UpdateRequestStatus(userId, toUserId, EnumRelationships.Matched.ToString());
+        if (result)
+        {
+          return Ok();
+        }
+      }
+
+      return BadRequest();
     }
   }
 }

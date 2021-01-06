@@ -9,6 +9,10 @@ using MongoDB.Driver;
 using DatingAPI.Models.Relationship;
 using System.Collections.Generic;
 using DatingAPI.Enumerate;
+using DatingAPI.Models.Group;
+using DatingAPI.Services.Group;
+using DatingAPI.Services.Message;
+using DatingAPI.Models.Message;
 
 namespace DatingAPI.Data
 {
@@ -16,13 +20,20 @@ namespace DatingAPI.Data
   {
     private readonly IMongoCollection<UserModel> _userCollection;
     private readonly IMongoCollection<RelationshipModel> _relationshipCollection;
+    private IGroupServices _groupservice;
+    private IMessageServices _messageServices;
 
-    public UserServices(IConfiguration _config)
+    public UserServices(IConfiguration _config,
+      IGroupServices groupservice,
+      IMessageServices messageServices
+      )
     {
       var _mongoClient = new MongoClient(_config.GetSection("DatingSettings:ConnectionString").Value);
       var _database = _mongoClient.GetDatabase(_config.GetSection("DatingSettings:DatabaseName").Value);
       _userCollection = _database.GetCollection<UserModel>(typeof(UserModel).Name);
       _relationshipCollection = _database.GetCollection<RelationshipModel>(typeof(RelationshipModel).Name);
+      _groupservice = groupservice;
+      _messageServices = messageServices;
     }
 
     public async Task<UserModel> GetUser(string userId)
@@ -97,6 +108,8 @@ namespace DatingAPI.Data
       List<UserModel> users = new List<UserModel>();
       FilterDefinition<RelationshipModel> filter = Builders<RelationshipModel>.Filter.Eq(u => u.Status, EnumRelationships.Matched.ToString());
       var relationships = await _relationshipCollection.Find(filter).ToListAsync();
+      List<MessageModel> messages = new List<MessageModel>();
+      List<GroupModel> groups = new List<GroupModel>();
 
       foreach (RelationshipModel relationship in relationships)
       {
@@ -112,13 +125,51 @@ namespace DatingAPI.Data
         }
 
         UserModel user = await _userCollection.Find(filterUser).FirstOrDefaultAsync();
-        if (user != null)
+
+
+
+        if (user != null && !users.Any(u => u.ObjectId == user.ObjectId))
         {
           users.Add(user);
+          GroupModel group = await _groupservice.GetGroup(userId, user.ObjectId);
+          groups.Add(group);
+          MessageModel result = await _messageServices.GetLastMessageFromGroup(group.ObjectId);
+          if (result != null)
+          {
+            messages.Add(result);
+          }
         }
       }
 
-      return users;
+      if (messages.Count > 0)
+      {
+        messages = messages.OrderByDescending(m => m.CreatedAt).ToList();
+
+        List<UserModel> returnUsers = new List<UserModel>();
+        foreach (MessageModel message in messages)
+        {
+          foreach (GroupModel group in groups)
+          {
+            foreach (UserModel user in users)
+            {
+              if (message.GroupId == group.ObjectId && (user.ObjectId == group.ToUserId || user.ObjectId == group.UserId))
+              {
+                if (!returnUsers.Any(r => r.ObjectId == user.ObjectId))
+                {
+                  returnUsers.Add(user);
+                }
+              }
+            }
+          }
+        }
+
+        return returnUsers;
+      }
+
+      else
+      {
+        return users;
+      }
     }
 
     public async Task<bool> IsVerify(string email)

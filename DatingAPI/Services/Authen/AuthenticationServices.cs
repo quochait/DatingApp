@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -10,9 +11,11 @@ using DatingAPI.Models;
 using DatingAPI.Models.Authen;
 using DatingAPI.Models.Result;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using MimeKit;
 using MongoDB.Driver;
 
 namespace DatingAPI.Data
@@ -22,13 +25,15 @@ namespace DatingAPI.Data
     private IMongoCollection<AuthenticationModel> _authenCollection;
     private IMongoCollection<UserModel> _userCollection;
     private IMemoryCache _memoryCache;
+    private IHostingEnvironment _HostEnvironment;
     private IConfiguration configuration;
     private string cacheTokenVerifyEmail = "tokenVerifyEmail";
     private string cacheTokenReset = "tokenResetPassword";
     private string cacheKey = "CachedModel";
     private object existingItem;
+    private string templateEmail;
 
-    public AuthenticationServices(IConfiguration _config, IMemoryCache memoryCache)
+    public AuthenticationServices(IConfiguration _config, IMemoryCache memoryCache, IHostingEnvironment HostEnvironment)
     {
       var _mongoClient = new MongoClient(_config.GetSection("DatingSettings:ConnectionString").Value);
       var _database = _mongoClient.GetDatabase(_config.GetSection("DatingSettings:DatabaseName").Value);
@@ -36,6 +41,7 @@ namespace DatingAPI.Data
       _userCollection = _database.GetCollection<UserModel>(typeof(UserModel).Name);
       configuration = _config;
       _memoryCache = memoryCache;
+      _HostEnvironment = HostEnvironment;
     }
 
     public async Task<string> Login(string email, string password)
@@ -159,7 +165,11 @@ namespace DatingAPI.Data
           mailMessage.From = new MailAddress(emailFrom);
           mailMessage.To.Add(new MailAddress(email));
           mailMessage.Subject = "VERIFY EMAIL DATING APPLICATION";
-          mailMessage.Body = "Click to verify email DatingApp: " + urlToCheck;
+          //mailMessage.Body = string.Format("<!DOCTYPE html><html><head><title>Dating App</title><style type=\"text/css\">body{margin:0 0;padding:0 0}.wrapper{min-height:400px;min-width:400px;width:40%;margin:auto;background-image:linear-gradient(to bottom right, #fd716c, #ffaa4b);border:1px solid white;border-radius:5px 20px 5px}.wrapper{text-align:center;color:white;font-size:bold;font-size:1.5em}.wrapper{}.header{margin-bottom:80px}.content{margin:auto;width:85%;background:#22a822;border-radius:5px;padding:10px 100px;text-decoration:none;color:white}.content:hover{background:#1b841b}.footer{margin-top:90px;color:#550909;font-style:italic}</style></head><body><div class=\"wrapper\"><div class=\"header\"><h1>{0}</h1></div> <a href=\"{1}\" class=\"content\">Click here</a><div class=\"footer\"><p>Email: support@dating.com</p></div></div></body></html>", "Verify email to Dating application", urlToCheck);
+          //mailMessage.Body = "Click to verify email DatingApp: " + urlToCheck;
+
+          mailMessage.Body = CreateBody("Click to verify email DatingApp", urlToCheck);
+          mailMessage.IsBodyHtml = true;
 
           //send email
           try
@@ -173,6 +183,23 @@ namespace DatingAPI.Data
           }
         }
       }
+    }
+
+    private string CreateBody(string title, string link)
+    {
+      string contentRootPath = _HostEnvironment.ContentRootPath;
+      string emailTemplatePath = Path.Combine(contentRootPath, "Common", "EmailTemplate.html");
+      string body = string.Empty;
+
+      using (StreamReader reader = new StreamReader(emailTemplatePath))
+      {
+        body = reader.ReadToEnd();
+      }
+
+      body = body.Replace("{appHeader}", title);
+      body = body.Replace("{link}", link);
+
+      return body;
     }
 
     public bool SendTokenResetPassword(string userId, string email)
@@ -202,7 +229,10 @@ namespace DatingAPI.Data
           mailMessage.To.Add(new MailAddress(email));
           //mailMessage.Subject = "VERIFY EMAIL DATING APPLICATION";
           mailMessage.Subject = "RESET PASSWORD DATING APPLICATION";
-          mailMessage.Body = "Click to reset password DatingApp: " + urlToCheck;
+          mailMessage.Body = CreateBody("RESET PASSWORD DATING APPLICATION", urlToCheck);
+          mailMessage.IsBodyHtml = true;
+
+          //mailMessage.Body = "Click to reset password DatingApp: " + urlToCheck;
 
           //send email
           try
@@ -246,7 +276,7 @@ namespace DatingAPI.Data
     public ResultModel CheckTokenEmail(string userId, string token)
     {
       ResultModel result = new ResultModel();
-      //get value to check
+      
       CacheModel cache = GetCached(userId, cacheTokenVerifyEmail);
       if (cache != null)
       {
@@ -254,7 +284,6 @@ namespace DatingAPI.Data
         {
           result.True = true;
 
-          //update user email
           FilterDefinition<UserModel> filter = Builders<UserModel>.Filter.Eq(u => u.ObjectId, userId);
           UpdateDefinition<UserModel> update = Builders<UserModel>.Update.Set(u => u.IsVerifyEmail, true);
           var _ = _userCollection.FindOneAndUpdate(filter, update);
@@ -273,39 +302,6 @@ namespace DatingAPI.Data
         return result;
       }
     }
-
-    //backup =)) dm
-    //public ResultModel CheckTokenEmail(string userId, string token)
-    //{
-    //  ResultModel result = new ResultModel();
-    //  //get value to check
-
-    //  if (_memoryCache.TryGetValue(cacheTokenVerifyEmail, out existingItem))
-    //  {
-    //    string _value = existingItem.ToString();
-    //    if (_value == token)
-    //    {
-    //      result.True = true;
-
-    //      //update user email
-    //      FilterDefinition<UserModel> filter = Builders<UserModel>.Filter.Eq(u => u.ObjectId, userId);
-    //      UpdateDefinition<UserModel> update = Builders<UserModel>.Update.Set(u => u.IsVerifyEmail, true);
-    //      var _ = _userCollection.FindOneAndUpdate(filter, update);
-
-    //      return result;
-    //    }
-    //    else
-    //    {
-    //      result.Error = "Token not matched.";
-    //      return result;
-    //    }
-    //  }
-    //  else
-    //  {
-    //    result.Error = "Token Expiration";
-    //    return result;
-    //  }
-    //}
 
     public ResultModel CheckTokenReset(string userId, string token)
     {

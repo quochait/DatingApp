@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DatingAPI.Data;
@@ -9,7 +7,6 @@ using DatingAPI.Models;
 using DatingAPI.Models.Group;
 using DatingAPI.Services.Group;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using DatingAPI.Services.Message;
@@ -57,6 +54,7 @@ namespace DatingAPI.Controllers
       GroupModel groupModel = await _groupService.GetGroup(userId, toUserId);
       if (groupModel == null)
       {
+        // create group after matched
         await _groupService.InitGroup(userId, toUserId);
         groupModel = await _groupService.GetGroup(userId, toUserId);
         return Ok(null);

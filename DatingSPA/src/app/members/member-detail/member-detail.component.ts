@@ -92,6 +92,7 @@ export class MemberDetailComponent implements OnInit {
       res => {
         this.alertify.success("Waiting for accept.");
         this.buttonMatchToggle();
+        this.status = 'Pending';
     }, 
     error => {
       this.alertify.error(error);
