@@ -8,8 +8,11 @@ using DatingAPI.Dtos;
 using DatingAPI.Enumerate;
 using DatingAPI.Helpers;
 using DatingAPI.Models;
+using DatingAPI.Models.Group;
+using DatingAPI.Models.Message;
 using DatingAPI.Models.Relationship;
 using DatingAPI.Services.Group;
+using DatingAPI.Services.Message;
 using DatingAPI.Services.Relationship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,12 +31,13 @@ namespace DatingAPI.Controllers
     private readonly IRelationshipService _relationshipService;
     private readonly string UserId;
     private readonly IGroupServices _groupService;
-
+    private IMessageServices _messageServices;
     public UserController(
       IUserServices userServices,
       IMapper mapper,
       IAuthenticationServices authenticationServices,
       IRelationshipService relationshipService,
+      IMessageServices messageServices,
       IGroupServices groupServices)
     {
       _userServices = userServices;
@@ -41,6 +45,7 @@ namespace DatingAPI.Controllers
       _authenticationServices = authenticationServices;
       _relationshipService = relationshipService;
       _groupService = groupServices;
+      _messageServices = messageServices;
       //UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
     }
 
@@ -219,6 +224,9 @@ namespace DatingAPI.Controllers
       if (user != null)
       {
         await _groupService.InitGroup(userId, toUserId);
+        GroupModel group = await _groupService.GetGroup(userId, toUserId);
+        MessageModel message = new MessageModel(group.ObjectId.ToString(), userId, toUserId, "");
+        await _messageServices.Insert(message);
         bool result = await _relationshipService.UpdateRequestStatus(userId, toUserId, EnumRelationships.Matched.ToString());
         if (result)
         {

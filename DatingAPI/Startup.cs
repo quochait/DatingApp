@@ -115,12 +115,16 @@ namespace DatingAPI
         app.UseHsts();
       }
 
-      app.UseHttpsRedirection();
+      //app.UseHttpsRedirection();
       app.UseCors( x=> x
+        //.AllowAnyOrigin()
         .WithOrigins("http://examonline247.co")
         .AllowAnyHeader()
-        .AllowAnyMethod().AllowCredentials()
-        .SetIsOriginAllowed((host) => true)
+        .AllowAnyMethod()
+        .AllowCredentials()
+        //.SetIsOriginAllowed((b) => true)
+
+        //.SetIsOriginAllowed((host) => true)
         );
 
       app.UseAuthentication();
