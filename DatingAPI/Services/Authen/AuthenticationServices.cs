@@ -160,7 +160,7 @@ namespace DatingAPI.Data
 
           client.UseDefaultCredentials = false;
           client.Credentials = new NetworkCredential(emailFrom, password);
-          client.EnableSsl = true;
+          client.EnableSsl = false;
 
           // configure the mail message
           mailMessage.From = new MailAddress(emailFrom);
