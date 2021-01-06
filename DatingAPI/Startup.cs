@@ -117,8 +117,8 @@ namespace DatingAPI
 
       //app.UseHttpsRedirection();
       app.UseCors( x=> x
-        .AllowAnyOrigin()
-        //.WithOrigins("http://examonline247.co")
+        //.AllowAnyOrigin()
+        .WithOrigins("http://examonline247.co", "http://192.168.1.252:4200")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()
