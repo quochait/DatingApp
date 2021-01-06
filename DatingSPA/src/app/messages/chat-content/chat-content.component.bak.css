@@ -38,8 +38,13 @@
   margin: 9px 12px 0 9px; 
 }
 
-.messages ul li.replies{
+ul li.replies{
   text-align: right;
+}
+
+ul li.replies div{
+  /* text-align: right; */
+  float: right;
 }
 
 .contact-profile {
@@ -116,10 +121,18 @@
   float: right;
   margin: 6px 0 0 8px;
 }
-.messages ul li.replies p {
+.messages ul li.replies div p {
   background: #f5f5f5;
-  float: right;
+  /* float: right;
+   */
+   display: inline-block;
 }
+
+.messages ul li.replies div span {
+   color: gray;
+   margin-left: 5px;
+}
+
 .messages ul li img {
   width: 22px;
   border-radius: 50%;

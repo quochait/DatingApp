@@ -30,7 +30,9 @@
       <li *ngFor="let message of this.messages; let i = index; let lastcall=last" [ngClass]="isSent(message.userId)"
         id="list-message-{{i}}"
       >
-        <p>{{ message.content }}</p>
+          <p>{{ message.content }}</p>
+          <span>{{message.createdAt | date: "shortTime"}}</span>
+        
       </li>
       <li style="margin-bottom: 15px;"></li>
       <li style="margin-bottom: 15px;"></li>
@@ -50,14 +52,14 @@
           'active-emoji': this.showEmojiPicker
         }" title="Pick your emoji…"></emoji-mart>
     </div>
-    <div class="col-10">
+    <div class="col-sm-7">
       <input type="text" [(ngModel)]="contentMessage" (keyup.enter)="sendMessage()"
         placeholder="Write your message..." />
     </div>
 
     <!-- <i class="fa fa-paperclip attachment" aria-hidden="true"></i> -->
 
-    <div class="col-1">
+    <div class="col-sm-1 offset-1">
       <button class="button" (click)="sendMessage()"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
     </div>
   </div>

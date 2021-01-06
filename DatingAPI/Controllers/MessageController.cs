@@ -61,7 +61,12 @@ namespace DatingAPI.Controllers
       }
 
       MessageModel message = await _messageServices.GetLastMessageFromGroup(groupModel.ObjectId);
-      return Ok(message);
+      if (message != null)
+      {
+        return Ok(message);
+      }
+
+      return Ok(new { groupId = groupModel.ObjectId });
     }
 
     [HttpGet("listMessages/{toUserId}")]

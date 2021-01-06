@@ -6,4 +6,5 @@ export class Message{
   toUserId: string;
   type: number;
   photoId: string;
+  createdAt: Date;
 }

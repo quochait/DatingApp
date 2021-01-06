@@ -45,6 +45,7 @@ export class ChatContentCompoent {
       this.messages = msg;
       this.height = $("#mainContents").prop("scrollHeight");
       $("#mainContents").scrollTop($("#mainContents").prop("scrollHeight"));
+      console.log(this.messages)
     });
 
     this.chatService.messageReceived.subscribe(res => {
